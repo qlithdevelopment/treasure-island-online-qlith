@@ -1,13 +1,12 @@
 import './App.css'
 
-function App() {
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./routes/AppRoutes";
 
+export default function App() {
   return (
-    <>
-      <h1 className='bg-primary p-3 text-white' >Primary</h1>
-      <h2 className='bg-secondary p-3 text-white' >Secondary</h2>
-    </>
-  )
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
 }
-
-export default App
