@@ -19,8 +19,8 @@ export default function Contact() {
   };
 
   return (
-    <section className="bg-bg-light px-6 py-20">
-      <div className="mx-auto grid max-w-7xl gap-12 md:grid-cols-2">
+    <section className="bg-bg-light px-4 sm:px-8 lg:px-10 py-20">
+      <div className="mx-auto grid max-w-7xl w-full gap-12 md:grid-cols-2">
         <div>
           <p className="font-semibold text-secondary">Contact Us</p>
 

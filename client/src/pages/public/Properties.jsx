@@ -28,8 +28,8 @@ const properties = [
 
 export default function Properties() {
   return (
-    <section className="bg-bg-light px-6 py-20">
-      <div className="mx-auto max-w-7xl">
+    <section className="bg-bg-light px-4 sm:px-8 lg:px-10 py-20">
+      <div className="mx-auto max-w-7xl w-full">
         <div className="mb-10">
           <p className="font-semibold text-secondary">Our Listings</p>
 
