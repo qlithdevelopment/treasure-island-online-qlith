@@ -2,16 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Maximize2,
   X,
   ChevronLeft,
   ChevronRight,
   MapPin,
-  Sparkles,
   ArrowRight,
 } from "lucide-react";
 
-// Curated high-resolution Unsplash architectural imagery for luxury real estate
 const galleryItems = [
   {
     id: 1,
@@ -90,6 +87,60 @@ const categories = [
   "Architecture",
 ];
 
+function getCardLayout(index, totalItems) {
+  if (totalItems === 1) {
+    return {
+      container: "col-span-2 lg:col-span-3 min-h-[320px] sm:min-h-[420px]",
+      isHero: true,
+    };
+  }
+
+  if (totalItems === 2) {
+    if (index === 0) {
+      return {
+        container:
+          "col-span-2 sm:col-span-1 lg:col-span-2 min-h-[260px] sm:min-h-[360px] lg:min-h-[400px]",
+        isHero: true,
+      };
+    }
+    return {
+      container:
+        "col-span-2 sm:col-span-1 lg:col-span-1 min-h-[240px] sm:min-h-[360px] lg:min-h-[400px]",
+      isHero: false,
+    };
+  }
+
+  if (index === 0) {
+    return {
+      container:
+        "col-span-2 lg:col-span-2 lg:row-span-2 min-h-[280px] sm:min-h-[380px] lg:min-h-[520px]",
+      isHero: true,
+    };
+  }
+
+  if (index === 1 || index === 2) {
+    return {
+      container:
+        "col-span-1 min-h-[185px] sm:min-h-[240px] lg:min-h-[248px]",
+      isHero: false,
+    };
+  }
+
+  if (index === 3) {
+    return {
+      container:
+        "col-span-2 sm:col-span-2 lg:col-span-1 min-h-[220px] sm:min-h-[280px] lg:min-h-[260px]",
+      isHero: false,
+    };
+  }
+
+  return {
+    container:
+      "col-span-1 min-h-[185px] sm:min-h-[240px] lg:min-h-[260px]",
+    isHero: false,
+  };
+}
+
 export default function OurGallery() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [modalIndex, setModalIndex] = useState(null);
@@ -121,7 +172,6 @@ export default function OurGallery() {
     }
   }, [modalIndex, filteredItems.length]);
 
-  // Handle keyboard arrow keys & Escape for lightbox
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (modalIndex === null) return;
@@ -134,7 +184,6 @@ export default function OurGallery() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [modalIndex, handleNext, handlePrev]);
 
-  // Lock body scroll when lightbox is open
   useEffect(() => {
     if (modalIndex !== null) {
       document.body.style.overflow = "hidden";
@@ -148,11 +197,9 @@ export default function OurGallery() {
 
   return (
     <section className="relative w-full bg-gradient-to-b from-[#FFFFFF] via-[#F8FAFC] to-[#F1F5F9] px-4 sm:px-8 lg:px-10 pt-10 sm:pt-14 pb-24 sm:pb-32 text-slate-800 overflow-hidden select-none">
-      {/* Ambient background glow accents */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-gradient-to-r from-[#F87907]/6 via-[#23ADD9]/5 to-transparent blur-[120px] pointer-events-none rounded-full" />
       <div className="absolute bottom-10 left-10 w-72 h-72 bg-[#F87907]/5 blur-[90px] pointer-events-none rounded-full" />
 
-      {/* Decorative star accents matching luxury theme */}
       <div className="absolute top-20 right-10 sm:right-20 w-8 h-8 opacity-30 pointer-events-none">
         <svg viewBox="0 0 24 24" className="w-full h-full fill-amber-400">
           <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" />
@@ -167,7 +214,6 @@ export default function OurGallery() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-center mb-8 sm:mb-10"
         >
-          {/* Main Heading */}
           <h2
             className="text-3xl sm:text-4xl md:text-[2.75rem] font-serif font-bold text-[#0F172A] tracking-tight mb-2"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
@@ -175,7 +221,6 @@ export default function OurGallery() {
             Our Gallery
           </h2>
 
-          {/* Elegant Section Underline Flourish - exactly unified across all sections */}
           <div className="flex items-center justify-center gap-1.5 mt-2.5 mb-3.5">
             <span className="w-12 sm:w-16 h-[2px] bg-gradient-to-r from-transparent via-[#F87907] to-[#F87907] rounded-full" />
             <span className="w-1.5 h-1.5 rounded-full bg-[#F87907]/60" />
@@ -184,7 +229,6 @@ export default function OurGallery() {
             <span className="w-12 sm:w-16 h-[2px] bg-gradient-to-l from-transparent via-[#F87907] to-[#F87907] rounded-full" />
           </div>
 
-          {/* Subtitle */}
           <p className="text-sm sm:text-base md:text-[17px] text-slate-500 font-normal leading-relaxed max-w-xl mx-auto">
             A visual showcase of our master-crafted residences, landmark
             architecture, and bespoke interior spaces
@@ -212,12 +256,11 @@ export default function OurGallery() {
 
         <motion.div
           layout
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7 items-stretch"
+          className="grid grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5 lg:gap-6 items-stretch"
         >
           <AnimatePresence>
             {filteredItems.map((item, idx) => {
-              // Bento layout: When on "All", item 1 takes 2 cols and 2 rows on desktop
-              const isLarge = activeCategory === "All" && item.isFeatured;
+              const layoutInfo = getCardLayout(idx, filteredItems.length);
 
               return (
                 <motion.div
@@ -228,72 +271,14 @@ export default function OurGallery() {
                   exit={{ opacity: 0, scale: 0.92, y: 20 }}
                   transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                   onClick={() => handleOpenModal(idx)}
-                  className={`group relative rounded-2xl overflow-hidden cursor-pointer bg-slate-900 border border-slate-200/80 shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.22)] transition-all duration-500 ${
-                    isLarge
-                      ? "sm:col-span-2 lg:col-span-2 lg:row-span-2 min-h-[380px] sm:min-h-[460px] lg:min-h-[560px]"
-                      : "min-h-[280px] sm:min-h-[310px] lg:min-h-[268px]"
-                  }`}
+                  className={`group relative rounded-2xl overflow-hidden cursor-pointer bg-slate-100 border border-slate-200/80 shadow-[0_4px_16px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_36px_rgba(0,0,0,0.18)] transition-all duration-500 ${layoutInfo.container}`}
                 >
-                  {/* Image with smooth zoom effect */}
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     loading="lazy"
                   />
-
-                  {/* Gradient overlay for text readability */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-black/10 group-hover:from-slate-950/95 group-hover:via-slate-950/40 transition-colors duration-300" />
-
-                  {/* Top floating pill & maximize button */}
-                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none">
-                    <span className="px-3.5 py-1 rounded-full text-xs font-medium text-white bg-black/45 backdrop-blur-md border border-white/20 shadow-sm flex items-center gap-1.5">
-                      <Sparkles size={12} className="text-[#FBBF24]" />
-                      {item.badge}
-                    </span>
-
-                    <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white opacity-85 group-hover:opacity-100 group-hover:bg-[#F87907] group-hover:border-[#F87907] transition-all duration-300 transform group-hover:scale-110 shadow-sm">
-                      <Maximize2 size={16} />
-                    </div>
-                  </div>
-
-                  {/* Bottom details card */}
-                  <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 z-10 text-white transform transition-transform duration-300">
-                    <div className="flex items-center gap-1.5 text-xs text-amber-300/90 font-medium mb-1.5">
-                      <MapPin size={13} className="text-[#F87907]" />
-                      <span>{item.location}</span>
-                    </div>
-
-                    <h3
-                      className={`font-serif font-bold text-white group-hover:text-[#FBBF24] transition-colors leading-tight mb-1.5 ${
-                        isLarge
-                          ? "text-xl sm:text-2xl lg:text-3xl"
-                          : "text-lg sm:text-xl"
-                      }`}
-                      style={{
-                        fontFamily: "'Playfair Display', Georgia, serif",
-                      }}
-                    >
-                      {item.title}
-                    </h3>
-
-                    <p
-                      className={`text-slate-300/90 font-normal leading-relaxed line-clamp-2 ${
-                        isLarge ? "text-xs sm:text-sm max-w-lg" : "text-xs"
-                      }`}
-                    >
-                      {item.subtitle}
-                    </p>
-
-                    {/* View Details Indicator */}
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F87907] group-hover:text-amber-300 mt-3 pt-3 border-t border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <span>View Gallery Preview</span>
-                      <ArrowRight
-                        size={13}
-                        className="transform group-hover:translate-x-1 transition-transform"
-                      />
-                    </div>
-                  </div>
                 </motion.div>
               );
             })}
@@ -329,7 +314,6 @@ export default function OurGallery() {
               className="relative max-w-5xl w-full bg-slate-900 rounded-2xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.5)] border border-slate-700/60"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Close Button */}
               <button
                 onClick={handleCloseModal}
                 className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/60 hover:bg-[#F87907] text-white flex items-center justify-center backdrop-blur-sm transition-all duration-200 border border-white/20 cursor-pointer shadow-lg"
@@ -338,7 +322,6 @@ export default function OurGallery() {
                 <X size={20} />
               </button>
 
-              {/* Prev / Next Navigation Controls */}
               <button
                 onClick={handlePrev}
                 className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/60 hover:bg-[#F87907] text-white flex items-center justify-center backdrop-blur-sm transition-all duration-200 border border-white/20 cursor-pointer shadow-lg"
@@ -355,7 +338,6 @@ export default function OurGallery() {
                 <ChevronRight size={22} />
               </button>
 
-              {/* Large Image Frame */}
               <div className="relative w-full h-[360px] sm:h-[480px] md:h-[540px] bg-black">
                 <img
                   src={filteredItems[modalIndex].image}
@@ -364,7 +346,6 @@ export default function OurGallery() {
                 />
               </div>
 
-              {/* Modal Caption Footer */}
               <div className="p-5 sm:p-6 bg-slate-950/95 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1.5">

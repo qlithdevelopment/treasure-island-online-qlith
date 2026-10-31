@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import logoIcon from "../../assets/home/logo_icon_transparent.png";
 
 const navLinks = [
@@ -20,7 +20,6 @@ export default function Navbar() {
   const isHomePage = location.pathname === "/";
 
   useEffect(() => {
-    // Check initial scroll on load or route change
     const checkScroll = () => {
       const currentScrollY = window.scrollY;
       const diff = currentScrollY - lastScrollY.current;
@@ -31,25 +30,19 @@ export default function Navbar() {
           setShowOtherNav(false);
         } else {
           setIsHero(false);
-          // When user scrolls down, hide the nav bar
           if (diff > 4) {
             setShowOtherNav(false);
-          }
-          // When user scrolls up, show the nav bar
-          else if (diff < -4) {
+          } else if (diff < -4) {
             setShowOtherNav(true);
           }
         }
       } else {
-        // Other pages always use the other attractive navbar
         setIsHero(false);
         if (currentScrollY <= 20) {
           setShowOtherNav(true);
         } else if (diff > 4) {
-          // Scroll down: hide
           setShowOtherNav(false);
         } else if (diff < -4) {
-          // Scroll up: show
           setShowOtherNav(true);
         }
       }
@@ -63,7 +56,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", checkScroll);
   }, [isHomePage]);
 
-  // Adjust mobile menu state when route changes
   const [prevPath, setPrevPath] = useState(location.pathname);
   if (prevPath !== location.pathname) {
     setPrevPath(location.pathname);
@@ -72,10 +64,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ========================================================
-          1. CURRENT NAVBAR: Only shown in Home Hero Section
-          Attractive floating badges with smooth transition
-          ======================================================== */}
       <header
         className={`fixed top-0 left-0 right-0 z-40 w-full px-4 sm:px-8 lg:px-10 py-4 sm:py-5 pointer-events-none transition-all duration-500 ease-out ${
           isHero && isHomePage
@@ -84,7 +72,6 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-          {/* Left: Brand Badge */}
           <Link
             to="/"
             className="pointer-events-auto group flex items-center gap-3 rounded-2xl bg-black/35 backdrop-blur-md border border-white/10 px-4 sm:px-5 py-2.5 sm:py-3 shadow-2xl transition-all duration-300 hover:bg-black/50 hover:border-white/20"
@@ -107,7 +94,6 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Right: Floating Frosted Pill Navbar (Desktop) */}
           <nav className="pointer-events-auto hidden md:flex items-center gap-6 lg:gap-8 rounded-full bg-[#182617]/40 backdrop-blur-md border border-white/10 px-7 lg:px-8 py-2.5 sm:py-3 shadow-2xl">
             {navLinks.map((link) => (
               <NavLink
@@ -125,16 +111,15 @@ export default function Navbar() {
               </NavLink>
             ))}
 
-            {/* Book a Tour Button */}
             <Link
-              to="/contact"
-              className="rounded-full border border-[#E5A96E]/70 px-5 py-1.5 text-sm font-medium text-white/95 transition-all duration-300 hover:border-[#E5A96E] hover:bg-[#E5A96E]/15 hover:shadow-[0_0_15px_rgba(229,169,110,0.3)]"
+              to="/login"
+              className="rounded-full border border-[#E5A96E]/70 px-5 py-1.5 text-sm font-medium text-white/95 transition-all duration-300 hover:border-[#E5A96E] hover:bg-[#E5A96E]/15 hover:shadow-[0_0_15px_rgba(229,169,110,0.3)] flex items-center gap-1.5"
             >
-              Book a Tour
+              <LogIn size={15} />
+              <span>Login</span>
             </Link>
           </nav>
 
-          {/* Right: Normal Mobile Hamburger Toggle Button */}
           <div className="pointer-events-auto md:hidden flex items-center">
             <button
               type="button"
@@ -148,10 +133,6 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* ========================================================
-          2. OTHER SECTION NAVBAR: Simple Attractive Sticky Navbar
-          Auto-appears when scrolling down, hides when scrolling up
-          ======================================================== */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 w-full px-4 sm:px-8 lg:px-10 py-3 sm:py-3.5 transition-all duration-300 ease-in-out ${
           isHero && isHomePage
@@ -162,7 +143,6 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-          {/* Left: Brand Identity */}
           <Link to="/" className="flex items-center gap-3 group">
             <div className="w-8 h-8 flex items-center justify-center">
               <img
@@ -181,7 +161,6 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Center/Right: Simple Attractive Navigation Links (Desktop) */}
           <nav className="hidden md:flex items-center gap-7 lg:gap-9">
             {navLinks.map((link) => (
               <NavLink
@@ -206,16 +185,15 @@ export default function Navbar() {
               </NavLink>
             ))}
 
-            {/* Book a Tour Button */}
             <Link
-              to="/contact"
-              className="rounded-full bg-gradient-to-r from-[#F9770B] via-[#F86E00] to-[#EA580C] px-5 sm:px-6 py-2 text-sm font-medium text-white shadow-[0_4px_15px_rgba(249,119,11,0.3)] hover:shadow-[0_6px_20px_rgba(249,119,11,0.45)] hover:scale-[1.03] active:scale-[0.98] transition-all duration-200"
+              to="/login"
+              className="rounded-full bg-gradient-to-r from-[#F9770B] via-[#F86E00] to-[#EA580C] px-5 sm:px-6 py-2 text-sm font-medium text-white shadow-[0_4px_15px_rgba(249,119,11,0.3)] hover:shadow-[0_6px_20px_rgba(249,119,11,0.45)] hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 flex items-center gap-1.5"
             >
-              Book a Tour
+              <LogIn size={15} />
+              <span>Login</span>
             </Link>
           </nav>
 
-          {/* Right: Normal Mobile Hamburger Toggle Button */}
           <div className="md:hidden flex items-center">
             <button
               type="button"
@@ -229,9 +207,6 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* ========================================================
-          3. RESPONSIVE MOBILE MENU: Normal, Clean & Interactive
-          ======================================================== */}
       <div
         className={`fixed inset-0 z-50 md:hidden transition-all duration-300 ${
           mobileMenuOpen
@@ -239,19 +214,16 @@ export default function Navbar() {
             : "opacity-0 pointer-events-none"
         }`}
       >
-        {/* Dark Backdrop Overlay */}
         <div
           className="absolute inset-0 bg-black/70 backdrop-blur-sm"
           onClick={() => setMobileMenuOpen(false)}
         />
 
-        {/* Mobile Menu Content Panel */}
         <div
           className={`absolute top-0 right-0 left-0 bg-[#0c140d]/95 backdrop-blur-2xl border-b border-white/15 p-6 shadow-2xl transition-transform duration-300 ease-out ${
             mobileMenuOpen ? "translate-y-0" : "-translate-y-full"
           }`}
         >
-          {/* Header with Logo and Close Button */}
           <div className="flex items-center justify-between pb-5 border-b border-white/10">
             <div className="flex items-center gap-3">
               <img
@@ -279,7 +251,6 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Navigation Links */}
           <div className="flex flex-col gap-2 py-5">
             {navLinks.map((link) => (
               <NavLink
@@ -298,13 +269,13 @@ export default function Navbar() {
               </NavLink>
             ))}
 
-            {/* Mobile Book a Tour CTA */}
             <Link
-              to="/contact"
+              to="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="mt-3 text-center rounded-full bg-gradient-to-r from-[#F9770B] via-[#F86E00] to-[#EA580C] px-6 py-3 text-sm font-medium text-white shadow-lg shadow-orange-500/30 active:scale-95 transition-all"
+              className="mt-3 flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#F9770B] via-[#F86E00] to-[#EA580C] px-6 py-3 text-sm font-medium text-white shadow-lg shadow-orange-500/30 active:scale-95 transition-all"
             >
-              Book a Tour
+              <LogIn size={16} />
+              <span>Login</span>
             </Link>
           </div>
         </div>

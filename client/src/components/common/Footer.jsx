@@ -1,28 +1,13 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import logo from "../../assets/home/logo_icon_transparent.png";
 
-// Curated luxury architectural background image for Footer (Warm twilight estate)
 const footerBg =
   "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=85";
 
 export default function Footer() {
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (email.trim()) {
-      setSubscribed(true);
-      setEmail("");
-      setTimeout(() => setSubscribed(false), 4000);
-    }
-  };
-
   return (
     <footer className="relative w-full bg-[#020B0F] border-t border-white/10 text-slate-300 px-4 sm:px-8 lg:px-10 pt-16 sm:pt-20 pb-10 sm:pb-12 overflow-hidden select-none">
-      {/* Clearly Visible Architectural Background Image with Balanced Contrast Overlays */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <img
           src={footerBg}
@@ -30,22 +15,16 @@ export default function Footer() {
           className="w-full h-full object-cover object-center transform scale-105"
           loading="lazy"
         />
-        {/* Balanced dark gradient allowing the architecture to be clearly visible */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#020B0F]/82 via-[#020B0F]/65 to-[#020B0F]/88" />
         <div className="absolute inset-0 bg-black/20" />
       </div>
 
-      {/* Ambient background soft glow accents */}
       <div className="absolute top-0 left-1/4 w-[500px] h-[250px] bg-[#F87907]/10 blur-[120px] pointer-events-none rounded-full" />
       <div className="absolute bottom-0 right-1/4 w-[400px] h-[200px] bg-[#23ADD9]/10 blur-[100px] pointer-events-none rounded-full" />
 
       <div className="relative z-10 max-w-7xl mx-auto w-full">
-        {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 sm:pb-14 border-b border-white/10">
-          {/* ========================================================
-              COLUMN 1: BRAND OVERVIEW (lg:col-span-4)
-              ======================================================== */}
-          <div className="lg:col-span-4 flex flex-col items-start pr-0 lg:pr-6">
+          <div className="lg:col-span-5 flex flex-col items-start pr-0 lg:pr-6">
             <Link to="/" className="flex items-center gap-3 group mb-4">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400/20 to-orange-500/10 border border-amber-400/30 flex items-center justify-center p-1.5 shadow-sm group-hover:border-[#F87907] transition-colors">
                 <img
@@ -79,10 +58,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* ========================================================
-              COLUMN 2: MENU LINKS (lg:col-span-2)
-              ======================================================== */}
-          <div className="lg:col-span-2 sm:pl-2">
+          <div className="lg:col-span-3 sm:pl-2 lg:pl-8">
             <h3 className="text-sm font-semibold text-white tracking-wider mb-4 uppercase">
               Menu
             </h3>
@@ -122,10 +98,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* ========================================================
-              COLUMN 3: CONTACTS & SOCIALS (lg:col-span-3)
-              ======================================================== */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-4">
             <h3 className="text-sm font-semibold text-white tracking-wider mb-4 uppercase">
               Contacts
             </h3>
@@ -149,13 +122,11 @@ export default function Footer() {
               </a>
             </div>
 
-            {/* Socials Subsection */}
             <div className="mt-6">
               <h4 className="text-xs font-semibold text-white tracking-wider mb-3 uppercase">
                 Socials
               </h4>
               <div className="flex items-center gap-2.5">
-                {/* Facebook */}
                 <a
                   href="https://facebook.com"
                   target="_blank"
@@ -168,7 +139,6 @@ export default function Footer() {
                   </svg>
                 </a>
 
-                {/* Instagram */}
                 <a
                   href="https://instagram.com"
                   target="_blank"
@@ -181,7 +151,6 @@ export default function Footer() {
                   </svg>
                 </a>
 
-                {/* YouTube */}
                 <a
                   href="https://youtube.com"
                   target="_blank"
@@ -196,49 +165,8 @@ export default function Footer() {
               </div>
             </div>
           </div>
-
-          {/* ========================================================
-              COLUMN 4: NEWSLETTER (lg:col-span-3)
-              ======================================================== */}
-          <div className="lg:col-span-3">
-            <h3 className="text-sm font-semibold text-white tracking-wider mb-4 uppercase">
-              Subscribe to our newsletter
-            </h3>
-            <p className="text-xs text-slate-400 mb-3.5 leading-relaxed">
-              Stay informed with our latest property launches, market insights,
-              and exclusive real estate offerings.
-            </p>
-
-            <form onSubmit={handleSubscribe} className="space-y-2.5">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                required
-                className="w-full px-4 py-2.5 rounded-lg bg-white text-slate-900 placeholder:text-slate-400 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-[#F87907] transition-all shadow-xs"
-              />
-
-              <button
-                type="submit"
-                className="w-full py-2.5 px-6 rounded-lg bg-gradient-to-r from-[#F87907] to-[#FB923C] hover:from-[#EA580C] hover:to-[#F87907] text-white font-bold text-xs sm:text-sm tracking-wider uppercase shadow-[0_4px_16px_rgba(248,121,7,0.35)] hover:shadow-[0_6px_22px_rgba(248,121,7,0.5)] transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer"
-              >
-                SUBSCRIBE
-              </button>
-            </form>
-
-            {subscribed && (
-              <div className="mt-2.5 flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
-                <CheckCircle2 size={13} />
-                <span>Thank you for subscribing!</span>
-              </div>
-            )}
-          </div>
         </div>
 
-        {/* ========================================================
-            BOTTOM COPYRIGHT BAR (Matching Screenshot)
-            ======================================================== */}
         <div className="pt-6 sm:pt-8 text-center text-xs text-slate-400">
           <p>
             © 2026 Treasure Island. All rights reserved | Developed by{" "}

@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Heart,
   Bed,
   Bath,
   Maximize,
   MapPin,
   Share2,
+  Check,
   Download,
   Layers,
   ArrowRight,
@@ -15,7 +15,6 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-// Card images embedded directly inside code
 const propPanorama =
   "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80";
 const propSaiCommercial =
@@ -24,7 +23,6 @@ const propSaiResidency =
   "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80";
 
 const propertiesData = [
-  // Page 1
   {
     id: 1,
     title: "Codename Panorama - Luxury Apartments...",
@@ -32,7 +30,6 @@ const propertiesData = [
     tag: "Luxury",
     tagType: "dark",
     isFeatured: false,
-    hasActiveOffer: false,
     price: "₹1.38 Cr",
     pricePrefix: null,
     image: propPanorama,
@@ -51,10 +48,9 @@ const propertiesData = [
     id: 2,
     title: "Sai Krishna Residency - Commercial Units",
     category: "Commercials",
-    tag: "Active Offer",
-    tagType: "orange",
+    tag: "Commercial",
+    tagType: "dark",
     isFeatured: false,
-    hasActiveOffer: true,
     price: "₹42 L*",
     pricePrefix: "Starts from",
     image: propSaiCommercial,
@@ -76,7 +72,6 @@ const propertiesData = [
     tag: "Featured",
     tagType: "light",
     isFeatured: true,
-    hasActiveOffer: false,
     price: "₹4,200,000",
     pricePrefix: null,
     image: propSaiResidency,
@@ -91,7 +86,6 @@ const propertiesData = [
     activeDotIndex: 2,
     page: 0,
   },
-  // Page 2
   {
     id: 4,
     title: "Royal Palm Enclave - Modern Villas...",
@@ -99,7 +93,6 @@ const propertiesData = [
     tag: "Luxury",
     tagType: "dark",
     isFeatured: false,
-    hasActiveOffer: false,
     price: "₹2.10 Cr",
     pricePrefix: null,
     image: propPanorama,
@@ -118,10 +111,9 @@ const propertiesData = [
     id: 5,
     title: "Utkal Signature - Retail & Commercial Hub",
     category: "Commercials",
-    tag: "Active Offer",
-    tagType: "orange",
+    tag: "Commercial",
+    tagType: "dark",
     isFeatured: false,
-    hasActiveOffer: true,
     price: "₹85 L*",
     pricePrefix: "Starts from",
     image: propSaiCommercial,
@@ -143,7 +135,6 @@ const propertiesData = [
     tag: "Featured",
     tagType: "light",
     isFeatured: true,
-    hasActiveOffer: false,
     price: "₹6,800,000",
     pricePrefix: null,
     image: propSaiResidency,
@@ -194,16 +185,50 @@ const cardVariants = {
 
 export default function FeaturedProperties() {
   const [activeCategory, setActiveCategory] = useState("All");
-  const [savedIds, setSavedIds] = useState([]);
   const [pageIndex, setPageIndex] = useState(0);
+  const [copiedId, setCopiedId] = useState(null);
+  const [toastMessage, setToastMessage] = useState("");
 
-  const toggleSave = (id) => {
-    setSavedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
-    );
+  const handleShare = async (prop) => {
+    const shareUrl = `${window.location.origin}/properties?id=${prop.id}`;
+    const shareData = {
+      title: prop.title,
+      text: `Check out ${prop.title} (${prop.price}) on Treasure Island!`,
+      url: shareUrl,
+    };
+
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (err) {
+        if (err.name !== "AbortError") {
+        } else {
+          return;
+        }
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedId(prop.id);
+      setToastMessage("Property link copied to clipboard!");
+      setTimeout(() => setCopiedId(null), 2500);
+      setTimeout(() => setToastMessage(""), 3000);
+    } catch {
+      const textArea = document.createElement("textarea");
+      textArea.value = shareUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setCopiedId(prop.id);
+      setToastMessage("Property link copied to clipboard!");
+      setTimeout(() => setCopiedId(null), 2500);
+      setTimeout(() => setToastMessage(""), 3000);
+    }
   };
 
-  // Filter by category first, then select page slice
   const categoryMatched =
     activeCategory === "All"
       ? propertiesData
@@ -227,10 +252,6 @@ export default function FeaturedProperties() {
   return (
     <section className="relative w-full bg-[#F4F5F7] px-4 sm:px-8 lg:px-10 pt-10 sm:pt-14 pb-18 sm:pb-24 text-slate-800 overflow-hidden select-none">
       <div className="max-w-7xl mx-auto w-full">
-        {/* ========================================================
-            1. SECTION HEADER
-            Title with golden line & dots decoration + Pagination
-            ======================================================== */}
         <div className="relative mb-6 sm:mb-8">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -246,7 +267,6 @@ export default function FeaturedProperties() {
               Featured Properties
             </h2>
 
-            {/* Elegant Section Underline Flourish */}
             <div className="flex items-center justify-center gap-1.5 mt-2.5 mb-3.5">
               <span className="w-12 sm:w-16 h-[2px] bg-gradient-to-r from-transparent via-[#F87907] to-[#F87907] rounded-full" />
               <span className="w-1.5 h-1.5 rounded-full bg-[#F87907]/60" />
@@ -260,7 +280,6 @@ export default function FeaturedProperties() {
             </p>
           </motion.div>
 
-          {/* Desktop Top-Right Pagination Controls (< Previous / Next >) */}
           <div className="hidden md:flex items-center gap-2 absolute right-0 bottom-1">
             <button
               type="button"
@@ -289,15 +308,14 @@ export default function FeaturedProperties() {
             </button>
           </div>
         </div>
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 sm:mb-10 pb-2">
-          {/* Left: Showing 27 exclusive properties */}
           <div className="text-xs sm:text-sm font-medium italic text-slate-500">
             Showing{" "}
             <span className="font-semibold text-[#F87907] not-italic">27</span>{" "}
             exclusive properties
           </div>
 
-          {/* Right: Category Filter Pills */}
           <div className="flex items-center gap-2 sm:gap-2.5">
             {categories.map((cat) => {
               const isActive = activeCategory === cat;
@@ -332,34 +350,26 @@ export default function FeaturedProperties() {
         >
           <AnimatePresence mode="popLayout">
             {displayedProperties.map((prop) => {
-              const isSaved = savedIds.includes(prop.id);
-
               return (
                 <motion.div
                   key={prop.id}
                   layout
                   variants={cardVariants}
                   whileHover={{ y: -6 }}
-                  className={`group relative flex flex-col justify-between rounded-2xl bg-white transition-all duration-300 overflow-hidden ${
-                    prop.hasActiveOffer
-                      ? "border-2 border-[#F87907] ring-4 ring-[#F87907]/10 shadow-[0_12px_36px_rgba(248,121,7,0.18)]"
-                      : "border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.12)] hover:border-slate-300"
-                  }`}
+                  className="group relative flex flex-col justify-between rounded-2xl bg-white border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.12)] hover:border-slate-300 transition-all duration-300 overflow-hidden"
                 >
-                  {/* Top Part: Image + Meta Badges */}
                   <div>
-                    {/* Property Image Container */}
                     <div className="relative w-full h-[190px] sm:h-[205px] overflow-hidden bg-slate-100">
-                      <img
-                        src={prop.image}
-                        alt={prop.title}
-                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      />
+                      <Link to={`/property/${prop.id}`} className="block w-full h-full">
+                        <img
+                          src={prop.image}
+                          alt={prop.title}
+                          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        />
+                      </Link>
 
-                      {/* Top Overlay Badges */}
                       <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                        {/* Left Badge (Luxury or Featured) */}
-                        {prop.tag && !prop.hasActiveOffer && (
+                        {prop.tag && (
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md shadow-sm ${
                               prop.tagType === "dark"
@@ -371,47 +381,27 @@ export default function FeaturedProperties() {
                           </span>
                         )}
 
-                        {/* Spacer if no left badge */}
-                        {prop.hasActiveOffer && <div />}
-
-                        {/* Active Offer Badge (Right) */}
-                        {prop.hasActiveOffer && (
-                          <span className="px-3.5 py-1 rounded-full text-xs font-bold text-white bg-[#F87907] shadow-md shadow-orange-500/30">
-                            {prop.tag}
-                          </span>
-                        )}
-
-                        {/* Top-Right Quick Action: Heart or Share */}
-                        {prop.tagType === "dark" && (
-                          <button
-                            type="button"
-                            onClick={() => toggleSave(prop.id)}
-                            className="pointer-events-auto w-8 h-8 rounded-full bg-white/95 hover:bg-white flex items-center justify-center text-slate-700 shadow-md transition-transform active:scale-90 cursor-pointer"
-                            aria-label="Save property"
-                          >
-                            <Heart
-                              size={15}
-                              className={`transition-colors ${
-                                isSaved
-                                  ? "fill-red-500 text-red-500"
-                                  : "text-slate-600 hover:text-red-500"
-                              }`}
-                            />
-                          </button>
-                        )}
-
-                        {prop.isFeatured && (
-                          <button
-                            type="button"
-                            className="pointer-events-auto px-2.5 py-1 rounded-full bg-white/95 text-slate-700 text-xs font-medium flex items-center gap-1 shadow-md hover:bg-white transition-all cursor-pointer"
-                          >
-                            <Share2 size={13} />
-                            <span>Share</span>
-                          </button>
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleShare(prop)}
+                          className="pointer-events-auto px-2.5 py-1 rounded-full bg-white/95 hover:bg-white text-slate-700 hover:text-[#F87907] text-xs font-medium flex items-center gap-1 shadow-md hover:shadow-lg transition-all duration-200 active:scale-95 cursor-pointer border border-white/40"
+                          title="Share this property"
+                          aria-label="Share property"
+                        >
+                          {copiedId === prop.id ? (
+                            <>
+                              <Check size={13} className="text-emerald-500" />
+                              <span className="text-emerald-600 font-semibold">Copied!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Share2 size={13} className="text-[#F87907]" />
+                              <span>Share</span>
+                            </>
+                          )}
+                        </button>
                       </div>
 
-                      {/* Image Bottom Center: Carousel Dots Indicator */}
                       <div className="absolute bottom-2.5 left-0 right-0 flex items-center justify-center gap-1.5 pointer-events-none">
                         {[0, 1, 2].map((dotIdx) => (
                           <span
@@ -426,63 +416,29 @@ export default function FeaturedProperties() {
                       </div>
                     </div>
 
-                    {/* Card Content Body */}
                     <div className="p-4 sm:p-5">
-                      {/* Title & Save Button Header Row */}
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <h3 className="text-base sm:text-[17px] font-bold text-[#0F172A] tracking-tight leading-snug group-hover:text-[#F87907] transition-colors line-clamp-1">
-                          {prop.title}
+                          <Link to={`/property/${prop.id}`}>
+                            {prop.title}
+                          </Link>
                         </h3>
 
-                        {/* Save Action for Card 1 & 2 */}
-                        {!prop.isFeatured && (
-                          <button
-                            type="button"
-                            onClick={() => toggleSave(prop.id)}
-                            className="shrink-0 flex flex-col items-center gap-0.5 text-[10px] font-medium text-slate-500 hover:text-[#F87907] transition-colors cursor-pointer group/save"
-                            aria-label="Save property"
-                          >
-                            <div className="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center group-hover/save:border-[#F87907]">
-                              <Heart
-                                size={12}
-                                className={
-                                  isSaved
-                                    ? "fill-red-500 text-red-500"
-                                    : "text-slate-400 group-hover/save:text-[#F87907]"
-                                }
-                              />
-                            </div>
-                            <span>Save</span>
-                          </button>
-                        )}
-
-                        {/* Share Action for Card 3 */}
-                        {prop.isFeatured && (
-                          <button
-                            type="button"
-                            className="shrink-0 w-7 h-7 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:text-[#F87907] hover:border-[#F87907] transition-colors cursor-pointer"
-                            aria-label="Share property"
-                          >
+                        <button
+                          type="button"
+                          onClick={() => handleShare(prop)}
+                          className="shrink-0 w-7 h-7 rounded-full border border-slate-200/90 hover:border-[#F87907] bg-slate-50/80 hover:bg-orange-50 text-slate-500 hover:text-[#F87907] flex items-center justify-center transition-all duration-200 active:scale-95 cursor-pointer"
+                          title="Share property"
+                          aria-label="Share property"
+                        >
+                          {copiedId === prop.id ? (
+                            <Check size={13} className="text-emerald-500" />
+                          ) : (
                             <Share2 size={13} />
-                          </button>
-                        )}
+                          )}
+                        </button>
                       </div>
 
-                      {/* For Sale & Commercial Unit Pills above price */}
-                      {prop.hasActiveOffer && (
-                        <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
-                          {prop.badges.map((b, idx) => (
-                            <span
-                              key={idx}
-                              className="px-2.5 py-0.5 rounded-md text-[11px] font-medium text-slate-600 bg-slate-100 border border-slate-200"
-                            >
-                              {b}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Price Section */}
                       <div className="mb-3">
                         {prop.pricePrefix && (
                           <span className="block text-xs text-slate-500 font-normal">
@@ -494,7 +450,6 @@ export default function FeaturedProperties() {
                         </span>
                       </div>
 
-                      {/* Specs Row */}
                       {prop.showSpecsLabel && (
                         <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
                           Specs
@@ -521,7 +476,6 @@ export default function FeaturedProperties() {
                         )}
                       </div>
 
-                      {/* Location Row */}
                       {prop.location && (
                         <div className="flex items-center justify-between text-xs text-slate-500 mb-3.5">
                           <span className="flex items-center gap-1.5 truncate pr-2">
@@ -532,7 +486,6 @@ export default function FeaturedProperties() {
                             <span className="truncate">{prop.location}</span>
                           </span>
 
-                          {/* Action icons for Card 1 */}
                           {prop.id === 1 && (
                             <div className="flex items-center gap-2 shrink-0 text-slate-400">
                               <Download
@@ -543,17 +496,20 @@ export default function FeaturedProperties() {
                                 size={13}
                                 className="hover:text-slate-700 cursor-pointer transition-colors"
                               />
-                              <Share2
-                                size={13}
-                                className="hover:text-slate-700 cursor-pointer transition-colors"
-                              />
+                              <button
+                                type="button"
+                                onClick={() => handleShare(prop)}
+                                className="hover:text-[#F87907] cursor-pointer transition-colors"
+                                title="Share"
+                              >
+                                <Share2 size={13} />
+                              </button>
                             </div>
                           )}
                         </div>
                       )}
 
-                      {/* Bottom Tag Pills (Card 1 & 3) */}
-                      {!prop.hasActiveOffer && (
+                      {prop.badges && prop.badges.length > 0 && (
                         <div className="flex flex-wrap items-center gap-1.5 pt-1">
                           {prop.badges.map((b, idx) => (
                             <span
@@ -572,6 +528,20 @@ export default function FeaturedProperties() {
             })}
           </AnimatePresence>
         </motion.div>
+
+        <AnimatePresence>
+          {toastMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900/95 text-white text-xs sm:text-sm font-medium shadow-2xl backdrop-blur-md border border-white/10"
+            >
+              <Check size={16} className="text-emerald-400" />
+              <span>{toastMessage}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
