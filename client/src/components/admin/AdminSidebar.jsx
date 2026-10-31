@@ -1,6 +1,6 @@
 
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Globe, X } from "lucide-react";
+import { LayoutDashboard, Globe } from "lucide-react";
 
 const menuItems = [
   { name: "Dashboard", path: "/admin", icon: LayoutDashboard },

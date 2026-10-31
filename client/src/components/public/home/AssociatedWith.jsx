@@ -1,91 +1,88 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, ShieldCheck, Award, Handshake } from "lucide-react";
 
-// Direct Image Links for Associated Developer Partners
-const logoDnHomes = "https://img.icons8.com/3d-fluency/94/skyscrapers.png";
-const logoSaswatRiverside = "https://img.icons8.com/3d-fluency/94/beach.png";
-const logoMetroBuilders = "https://img.icons8.com/3d-fluency/94/city.png";
-const logoAcrerise = "https://img.icons8.com/3d-fluency/94/bungalow.png";
-const logoZEstates = "https://img.icons8.com/3d-fluency/94/real-estate.png";
-const logoUtkalBuilders = "https://img.icons8.com/3d-fluency/94/monument.png";
-const logoAssotech = "https://img.icons8.com/3d-fluency/94/commercial.png";
-const logoPrimeLiving = "https://img.icons8.com/3d-fluency/94/home.png";
-const logoMotwaniConstructions =
-  "https://img.icons8.com/3d-fluency/94/foundation.png";
-const logoEvosBuildcon = "https://img.icons8.com/3d-fluency/94/crown.png";
+import logoAcrerise from "../../../assets/Associated_With/acrerise.png";
+import logoAssotech from "../../../assets/Associated_With/assotech.png";
+import logoDnHomes from "../../../assets/Associated_With/DN_Homes.png";
+import logoEvos from "../../../assets/Associated_With/evos.png";
+import logoLaxmi from "../../../assets/Associated_With/laxmi.png";
+import logoMetro from "../../../assets/Associated_With/metro.png";
+import logoMotwani from "../../../assets/Associated_With/motwani.png";
+import logoSaswat from "../../../assets/Associated_With/Saswat_riverside_trisulia.png";
+import logoUtkal from "../../../assets/Associated_With/utkal.png";
+import logoZEstates from "../../../assets/Associated_With/z_estates.png";
 
-const partners = [
+const row1 = [
   {
     id: 1,
     name: "DN Homes",
     logo: logoDnHomes,
-    role: "Premium Luxury Living",
-    tag: "Grade A Developer",
   },
   {
     id: 2,
     name: "Saswat Riverside",
-    logo: logoSaswatRiverside,
-    role: "Scenic Waterfront Estates",
-    tag: "Eco Communities",
+    logo: logoSaswat,
   },
   {
     id: 3,
     name: "Metro Builders",
-    logo: logoMetroBuilders,
-    role: "Odisha's Real Estate Pioneer",
-    tag: "Since 1993",
+    logo: logoMetro,
   },
   {
     id: 4,
     name: "AcreRise",
     logo: logoAcrerise,
-    role: "Modern Smart Townships",
-    tag: "Sustainable Living",
   },
   {
     id: 5,
     name: "Z Estates",
     logo: logoZEstates,
-    role: "Iconic Luxury Landmarks",
-    tag: "High-Rise Living",
   },
+];
+
+const row2 = [
   {
     id: 6,
     name: "Utkal Builders",
-    logo: logoUtkalBuilders,
-    role: "Architectural Excellence",
-    tag: "Trusted Quality",
+    logo: logoUtkal,
   },
   {
     id: 7,
     name: "Assotech",
     logo: logoAssotech,
-    role: "Integrated Smart Cities",
-    tag: "National Presence",
   },
   {
     id: 8,
-    name: "Prime Living",
-    logo: logoPrimeLiving,
-    role: "Bespoke Residences",
-    tag: "Modern Lifestyle",
+    name: "Laxmi",
+    logo: logoLaxmi,
   },
   {
     id: 9,
     name: "Motwani Constructions",
-    logo: logoMotwaniConstructions,
-    role: "Crafted Commercial & Residential",
-    tag: "Legacy Developer",
+    logo: logoMotwani,
   },
   {
     id: 10,
     name: "Evos Buildcon",
-    logo: logoEvosBuildcon,
-    role: "Palatial Luxury Villas",
-    tag: "Opulent Architecture",
+    logo: logoEvos,
   },
+];
+
+const row1Duplicated = [
+  ...row1,
+  ...row1,
+  ...row1,
+  ...row1,
+  ...row1,
+  ...row1,
+];
+const row2Duplicated = [
+  ...row2,
+  ...row2,
+  ...row2,
+  ...row2,
+  ...row2,
+  ...row2,
 ];
 
 const trustStats = [
@@ -111,27 +108,34 @@ const trustStats = [
   },
 ];
 
-export default function AssociatedWith() {
-  const [activePartner, setActivePartner] = useState(null);
-
+function PartnerCard({ partner }) {
   return (
-    <section className="relative w-full bg-gradient-to-b from-[#F8FAFC] via-[#FFFFFF] to-[#FAF9F6] px-4 sm:px-8 lg:px-10 pt-14 sm:pt-16 pb-20 sm:pb-24 text-slate-800 overflow-hidden select-none">
-      {/* Ambient background soft glow */}
+    <div
+      className="group relative flex items-center justify-center px-6 py-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.06)] hover:shadow-md hover:border-[#F87907] transition-all duration-300 w-[170px] sm:w-[195px] h-[80px] sm:h-[90px] shrink-0 select-none cursor-pointer"
+    >
+      <img
+        src={partner.logo}
+        alt={partner.name}
+        className="max-h-12 max-w-[130px] sm:max-w-[150px] object-contain filter group-hover:scale-108 transition-transform duration-300"
+        loading="lazy"
+      />
+    </div>
+  );
+}
+
+export default function AssociatedWith() {
+  return (
+    <section className="relative w-full bg-gradient-to-b from-[#F8FAFC] via-[#FFFFFF] to-[#FAF9F6] pt-14 sm:pt-16 pb-20 sm:pb-24 text-slate-800 overflow-hidden select-none">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[350px] bg-gradient-to-r from-[#F87907]/6 via-[#23ADD9]/5 to-transparent blur-[110px] pointer-events-none rounded-full" />
 
-      <div className="relative z-10 max-w-7xl mx-auto w-full">
-        {/* ========================================================
-            SECTION HEADER
-            Unified title with identical luxury diamond flourish
-            ======================================================== */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-8 lg:px-10 mb-8 sm:mb-10">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-10 sm:mb-12"
+          className="text-center"
         >
-          {/* Main Title */}
           <h2
             className="text-3xl sm:text-4xl md:text-[2.75rem] font-serif font-bold text-[#0F172A] tracking-tight mb-2"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
@@ -139,7 +143,6 @@ export default function AssociatedWith() {
             We Are Proud to Be Associated With
           </h2>
 
-          {/* Elegant Section Underline Flourish - exactly unified across all sections */}
           <div className="flex items-center justify-center gap-1.5 mt-2.5 mb-3.5">
             <span className="w-12 sm:w-16 h-[2px] bg-gradient-to-r from-transparent via-[#F87907] to-[#F87907] rounded-full" />
             <span className="w-1.5 h-1.5 rounded-full bg-[#F87907]/60" />
@@ -148,64 +151,59 @@ export default function AssociatedWith() {
             <span className="w-12 sm:w-16 h-[2px] bg-gradient-to-l from-transparent via-[#F87907] to-[#F87907] rounded-full" />
           </div>
 
-          {/* Subtitle */}
           <p className="text-sm sm:text-base md:text-[17px] text-slate-500 font-normal leading-relaxed max-w-2xl mx-auto">
             Building strong relationships with trusted industry leaders to
             deliver exceptional value.
           </p>
         </motion.div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4 lg:gap-5">
-          {partners.map((partner) => {
-            const isHovered = activePartner === partner.id;
+      </div>
 
-            return (
-              <motion.div
-                key={partner.id}
-                whileHover={{ y: -5, scale: 1.02 }}
-                onMouseEnter={() => setActivePartner(partner.id)}
-                onMouseLeave={() => setActivePartner(null)}
-                className={`group relative rounded-2xl bg-white p-4 sm:p-5 flex flex-col items-center justify-between border transition-all duration-300 cursor-pointer ${
-                  isHovered
-                    ? "border-[#F87907] ring-4 ring-[#F87907]/10 shadow-[0_12px_28px_rgba(248,121,7,0.16)]"
-                    : "border-slate-200/80 shadow-[0_4px_16px_rgba(0,0,0,0.04)] hover:border-slate-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
-                }`}
-              >
-                {/* Top Corner Pill Tag */}
-                <div className="w-full flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                    {partner.tag}
-                  </span>
-                  <span
-                    className={`w-2 h-2 rounded-full transition-colors ${
-                      isHovered ? "bg-[#F87907]" : "bg-slate-300"
-                    }`}
-                  />
-                </div>
+      <div className="relative w-full overflow-hidden py-3 sm:py-4">
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-28 bg-gradient-to-r from-[#F8FAFC] to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-[#FAF9F6] to-transparent z-10" />
 
-                {/* Logo Frame */}
-                <div className="w-full h-16 sm:h-20 flex items-center justify-center py-2 px-1">
-                  <img
-                    src={partner.logo}
-                    alt={partner.name}
-                    className="max-h-full max-w-full object-contain filter transition-transform duration-300 group-hover:scale-108"
-                    loading="lazy"
-                  />
-                </div>
-
-                {/* Partner Details */}
-                <div className="mt-3 text-center w-full pt-2 border-t border-slate-100">
-                  <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 group-hover:text-[#F87907] transition-colors truncate">
-                    {partner.name}
-                  </h4>
-                  <p className="text-[11px] text-slate-500 font-normal truncate mt-0.5">
-                    {partner.role}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
+        <div className="flex overflow-hidden py-2 mb-3 sm:mb-4">
+          <motion.div
+            className="flex gap-4 sm:gap-5 w-max"
+            initial={{ x: "0%" }}
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{
+              repeat: Infinity,
+              ease: "linear",
+              duration: 30,
+            }}
+          >
+            {row1Duplicated.map((partner, index) => (
+              <PartnerCard
+                key={`row1-${partner.id}-${index}`}
+                partner={partner}
+              />
+            ))}
+          </motion.div>
         </div>
 
+        <div className="flex overflow-hidden py-2.5 sm:py-3">
+          <motion.div
+            className="flex gap-4 sm:gap-5 w-max"
+            initial={{ x: "-50%" }}
+            animate={{ x: ["-50%", "0%"] }}
+            transition={{
+              repeat: Infinity,
+              ease: "linear",
+              duration: 30,
+            }}
+          >
+            {row2Duplicated.map((partner, index) => (
+              <PartnerCard
+                key={`row2-${partner.id}-${index}`}
+                partner={partner}
+              />
+            ))}
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-8 lg:px-10">
         <div className="mt-12 sm:mt-16 pt-8 border-t border-slate-200/80">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {trustStats.map((stat, idx) => (

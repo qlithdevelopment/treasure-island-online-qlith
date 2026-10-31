@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { MapPin, ArrowUpRight } from "lucide-react";
 import primeLocationsBg from "../../../assets/home/prime_locations_bg.jpg";
 
-// 6 Prime Localities in Bhubaneswar matching the reference layout
 const primeLocations = [
   {
     id: 1,
@@ -82,10 +81,6 @@ const cardVariants = {
 export default function PrimeLocations() {
   return (
     <section className="relative w-full overflow-hidden select-none py-16 sm:py-20 lg:py-24">
-      {/* ========================================================
-          BACKGROUND IMAGE (Stored locally in assets/home)
-          Penthouse Sky Lounge Panoramic Window with Dark Mood Lighting
-          ======================================================== */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <img
           src={primeLocationsBg}
@@ -93,17 +88,13 @@ export default function PrimeLocations() {
           className="w-full h-full object-cover object-center transform scale-105"
         />
 
-        {/* Cinematic dark gradients matching the uploaded screenshot */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/65 to-black/85" />
         <div className="absolute inset-0 bg-black/30 backdrop-blur-[0.5px]" />
-
-        {/* Ambient warm radial glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[380px] bg-[#F87907]/12 blur-[120px] rounded-full pointer-events-none" />
       </div>
 
       <div className="relative z-10 w-full px-4 sm:px-8 lg:px-10">
         <div className="max-w-7xl mx-auto w-full">
-          {/* Section Header */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -118,7 +109,6 @@ export default function PrimeLocations() {
               Prime locations in Bhubneswar
             </h2>
 
-            {/* Unified Luxury Gold Diamond Flourish */}
             <div className="flex items-center justify-center gap-1.5 mt-2.5 mb-3">
               <span className="w-12 sm:w-16 h-[2px] bg-gradient-to-r from-transparent via-[#F87907] to-[#F87907] rounded-full" />
               <span className="w-1.5 h-1.5 rounded-full bg-[#F87907]/60" />
@@ -150,7 +140,6 @@ export default function PrimeLocations() {
                   to={`/properties?location=${encodeURIComponent(loc.name)}`}
                   className="block w-full h-full relative"
                 >
-                  {/* Photo with smooth zoom */}
                   <img
                     src={loc.image}
                     alt={loc.name}
@@ -158,10 +147,8 @@ export default function PrimeLocations() {
                     loading="lazy"
                   />
 
-                  {/* Gradient Overlay for text contrast */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent transition-opacity duration-300 group-hover:from-black/90" />
 
-                  {/* Top Hover Pill Badge (Property Count + Arrow) */}
                   <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-white bg-black/60 backdrop-blur-md border border-white/20 flex items-center gap-1">
                       <MapPin size={10} className="text-[#F87907]" />
@@ -173,7 +160,6 @@ export default function PrimeLocations() {
                     </span>
                   </div>
 
-                  {/* Bottom White Label Button (Exactly matching the mockup) */}
                   <div className="absolute bottom-2.5 sm:bottom-3 left-2.5 sm:left-3 right-2.5 sm:right-3 z-10">
                     <div className="w-full py-1.5 sm:py-2 px-2 bg-white text-[#0F172A] font-semibold text-xs sm:text-[13px] rounded-lg sm:rounded-xl text-center shadow-md transition-all duration-300 group-hover:bg-[#F87907] group-hover:text-white truncate">
                       {loc.name}
