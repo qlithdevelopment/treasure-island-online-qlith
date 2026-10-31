@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Menu, X, LogIn } from "lucide-react";
 import logoIcon from "../../assets/home/logo_icon_transparent.png";
+import { useAuth } from "../../context/AuthContext";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -16,7 +17,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
   const location = useLocation();
-
+  const { isAuthenticated } = useAuth();
   const isHomePage = location.pathname === "/";
 
   useEffect(() => {
@@ -65,11 +66,10 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-40 w-full px-4 sm:px-8 lg:px-10 py-4 sm:py-5 pointer-events-none transition-all duration-500 ease-out ${
-          isHero && isHomePage
+        className={`fixed top-0 left-0 right-0 z-40 w-full px-4 sm:px-8 lg:px-10 py-4 sm:py-5 pointer-events-none transition-all duration-500 ease-out ${isHero && isHomePage
             ? "opacity-100 translate-y-0 scale-100"
             : "opacity-0 -translate-y-8 scale-95 pointer-events-none"
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <Link
@@ -100,10 +100,9 @@ export default function Navbar() {
                 key={link.path}
                 to={link.path}
                 className={({ isActive }) =>
-                  `text-sm font-medium transition-colors duration-200 ${
-                    isActive
-                      ? "text-[#F4C48D]"
-                      : "text-white/80 hover:text-white"
+                  `text-sm font-medium transition-colors duration-200 ${isActive
+                    ? "text-[#F4C48D]"
+                    : "text-white/80 hover:text-white"
                   }`
                 }
               >
@@ -134,13 +133,12 @@ export default function Navbar() {
       </header>
 
       <header
-        className={`fixed top-0 left-0 right-0 z-50 w-full px-4 sm:px-8 lg:px-10 py-3 sm:py-3.5 transition-all duration-300 ease-in-out ${
-          isHero && isHomePage
+        className={`fixed top-0 left-0 right-0 z-50 w-full px-4 sm:px-8 lg:px-10 py-3 sm:py-3.5 transition-all duration-300 ease-in-out ${isHero && isHomePage
             ? "opacity-0 -translate-y-full pointer-events-none"
             : showOtherNav
               ? "opacity-100 translate-y-0 pointer-events-auto bg-[#0c140d]/92 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)]"
               : "opacity-0 -translate-y-full pointer-events-none"
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
@@ -167,10 +165,9 @@ export default function Navbar() {
                 key={link.path}
                 to={link.path}
                 className={({ isActive }) =>
-                  `text-sm font-medium transition-colors duration-200 relative py-1 ${
-                    isActive
-                      ? "text-[#F4C48D] font-semibold"
-                      : "text-stone-300 hover:text-white"
+                  `text-sm font-medium transition-colors duration-200 relative py-1 ${isActive
+                    ? "text-[#F4C48D] font-semibold"
+                    : "text-stone-300 hover:text-white"
                   }`
                 }
               >
@@ -208,11 +205,10 @@ export default function Navbar() {
       </header>
 
       <div
-        className={`fixed inset-0 z-50 md:hidden transition-all duration-300 ${
-          mobileMenuOpen
+        className={`fixed inset-0 z-50 md:hidden transition-all duration-300 ${mobileMenuOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
-        }`}
+          }`}
       >
         <div
           className="absolute inset-0 bg-black/70 backdrop-blur-sm"
@@ -220,9 +216,8 @@ export default function Navbar() {
         />
 
         <div
-          className={`absolute top-0 right-0 left-0 bg-[#0c140d]/95 backdrop-blur-2xl border-b border-white/15 p-6 shadow-2xl transition-transform duration-300 ease-out ${
-            mobileMenuOpen ? "translate-y-0" : "-translate-y-full"
-          }`}
+          className={`absolute top-0 right-0 left-0 bg-[#0c140d]/95 backdrop-blur-2xl border-b border-white/15 p-6 shadow-2xl transition-transform duration-300 ease-out ${mobileMenuOpen ? "translate-y-0" : "-translate-y-full"
+            }`}
         >
           <div className="flex items-center justify-between pb-5 border-b border-white/10">
             <div className="flex items-center gap-3">
@@ -258,10 +253,9 @@ export default function Navbar() {
                 to={link.path}
                 onClick={() => setMobileMenuOpen(false)}
                 className={({ isActive }) =>
-                  `text-base font-medium py-2.5 px-4 rounded-xl transition-colors ${
-                    isActive
-                      ? "text-[#F4C48D] bg-white/10 font-semibold"
-                      : "text-stone-300 hover:text-white hover:bg-white/5"
+                  `text-base font-medium py-2.5 px-4 rounded-xl transition-colors ${isActive
+                    ? "text-[#F4C48D] bg-white/10 font-semibold"
+                    : "text-stone-300 hover:text-white hover:bg-white/5"
                   }`
                 }
               >

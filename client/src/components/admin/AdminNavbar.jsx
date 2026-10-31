@@ -1,13 +1,27 @@
 
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 export default function AdminNavbar() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login", { replace: true });
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      navigate("/login", { replace: true });
+      setIsLoggingOut(false);
+    }
   };
 
   return (
@@ -17,11 +31,13 @@ export default function AdminNavbar() {
       </h1>
 
       <button
+        type="button"
         onClick={handleLogout}
-        className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
+        disabled={isLoggingOut}
+        className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <LogOut size={17} />
-        Logout
+        {isLoggingOut ? "Logging out..." : "Logout"}
       </button>
     </header>
   );
