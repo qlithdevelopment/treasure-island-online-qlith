@@ -1,4 +1,3 @@
-
 import {
   createContext,
   useCallback,
@@ -22,16 +21,49 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     try {
-      if (await getToken()) {
-        await api.post("/logout");
+      if (typeof window !== "undefined") {
+        let token = localStorage.getItem("token");
+        if (
+          !token ||
+          token === "treasure_island_auth_token" ||
+          token.startsWith("{")
+        ) {
+          try {
+            token = await getToken();
+          } catch {
+            token = null;
+          }
+        }
+
+        if (
+          token &&
+          typeof token === "string" &&
+          token !== "treasure_island_auth_token" &&
+          !token.startsWith("{") &&
+          token.trim().length > 0
+        ) {
+          try {
+            await api.post(
+              "/logout",
+              {},
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+          } catch {}
+        }
       }
-    } catch (error) {
-      console.error(
-        "Backend logout failed:",
-        error.response?.data?.message || error.message
-      );
-    } finally {
-      clearToken();
+    } catch {} finally {
+      try {
+        clearToken();
+      } catch {}
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("access_token");
+        sessionStorage.clear();
+      }
       setUser(null);
     }
   }, []);
@@ -84,10 +116,8 @@ export function AuthProvider({ children }) {
         );
       }
 
-      // Save the backend's plain token in encrypted form.
       await storeToken(response.data.token);
 
-      // Verify the token and fetch the authenticated user.
       const meResponse = await api.get("/me");
 
       if (!meResponse.data.success) {

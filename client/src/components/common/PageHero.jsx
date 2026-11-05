@@ -1,9 +1,6 @@
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
-
-// Default luxury architectural imagery for common hero banners
-const defaultHeroBg =
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=85";
+import { villa1 as defaultHeroBg } from "../../assets/properties";
 
 export default function PageHero({
   badge,
@@ -18,7 +15,6 @@ export default function PageHero({
     <section
       className={`relative w-full overflow-hidden bg-slate-950 py-20 sm:py-28 text-white select-none ${className}`}
     >
-      {/* Background image with cinematic dark gradient overlays */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <img
           src={bgImage}
@@ -32,7 +28,6 @@ export default function PageHero({
 
       <div className="relative z-10 w-full px-4 sm:px-8 lg:px-10">
         <div className="max-w-7xl mx-auto w-full text-center">
-          {/* Top Badge Pill */}
           {badge && (
             <motion.div
               initial={{ opacity: 0, y: -15 }}
@@ -45,7 +40,6 @@ export default function PageHero({
             </motion.div>
           )}
 
-          {/* Main Title */}
           {title && (
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
@@ -58,7 +52,6 @@ export default function PageHero({
             </motion.h1>
           )}
 
-          {/* Unified Luxury Gold Diamond Flourish */}
           <div className="flex items-center justify-center gap-1.5 mt-2 mb-5">
             <span className="w-12 sm:w-16 h-[2px] bg-gradient-to-r from-transparent via-[#F87907] to-[#F87907] rounded-full" />
             <span className="w-1.5 h-1.5 rounded-full bg-[#F87907]/60" />
@@ -67,7 +60,6 @@ export default function PageHero({
             <span className="w-12 sm:w-16 h-[2px] bg-gradient-to-l from-transparent via-[#F87907] to-[#F87907] rounded-full" />
           </div>
 
-          {/* Subtitle */}
           {subtitle && (
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -79,7 +71,6 @@ export default function PageHero({
             </motion.p>
           )}
 
-          {/* Optional Children content (e.g. search bars, extra CTAs) */}
           {children && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}

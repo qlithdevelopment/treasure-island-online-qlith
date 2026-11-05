@@ -1,13 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   MapPin,
-  Bed,
-  Bath,
-  Maximize,
-  Share2,
   Check,
   ArrowRight,
   SlidersHorizontal,
@@ -16,38 +12,45 @@ import {
   ChevronDown,
   X,
   Phone,
+  Loader2,
 } from "lucide-react";
 import PageHero from "../../components/common/PageHero";
-import { propertiesData } from "../../data/propertiesData";
+import PropertyCard from "../../components/common/PropertyCard";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { getProperties } from "../../services/propertyService";
+import { getAllProperties } from "../../utils/propertyStorage";
+import {
+  oceanVilla,
+  villa1,
+  villa2,
+  interiorLiving,
+  apartment1 as fallbackPropertyImg,
+} from "../../assets/properties";
 
 const galleryShowcase = [
   {
     id: 1,
     title: "The Grand Horizon Villa",
     location: "Marine Drive, Puri Coast",
-    image:
-      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80",
+    image: oceanVilla,
   },
   {
     id: 2,
     title: "Royal Amber Penthouse",
     location: "Patia Hills, Bhubaneswar",
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+    image: villa1,
   },
   {
     id: 3,
     title: "Serene Meadow Residence",
     location: "Khandagiri Green Valley",
-    image:
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
+    image: villa2,
   },
   {
     id: 4,
     title: "Milano Luxury Living Suite",
     location: "Jayadev Vihar Heights",
-    image:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
+    image: interiorLiving,
   },
 ];
 
@@ -65,8 +68,43 @@ export default function Properties() {
   const [copiedId, setCopiedId] = useState(null);
   const [toastMessage, setToastMessage] = useState("");
 
+  const handleCopyLink = async (prop) => {
+    const shareUrl = `${window.location.origin}/property/${prop.slug || prop.id}`;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+      setCopiedId(prop.id);
+      setToastMessage("Property link copied to clipboard!");
+      setTimeout(() => setCopiedId(null), 2500);
+      setTimeout(() => setToastMessage(""), 3000);
+    } catch {
+      const textArea = document.createElement("textarea");
+      textArea.value = shareUrl;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setCopiedId(prop.id);
+      setToastMessage("Property link copied to clipboard!");
+      setTimeout(() => setCopiedId(null), 2500);
+      setTimeout(() => setToastMessage(""), 3000);
+    }
+  };
+
   const handleShare = async (prop) => {
-    const shareUrl = `${window.location.origin}/properties?id=${prop.id}`;
+    const shareUrl = `${window.location.origin}/property/${prop.slug || prop.id}`;
     const shareData = {
       title: prop.title,
       text: `Check out ${prop.title} (${prop.price}) on Treasure Island!`,
@@ -105,8 +143,36 @@ export default function Properties() {
     }
   };
 
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteQuery({
+    queryKey: ["properties", "public_catalog"],
+    queryFn: ({ pageParam }) => getProperties({ page: pageParam, per_page: 10 }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const currentPage = Number(lastPage?.current_page) || 1;
+      const lastPageNum = Number(lastPage?.last_page) || 1;
+      return currentPage < lastPageNum ? currentPage + 1 : undefined;
+    },
+  });
+
+  const properties = useMemo(() => {
+    if (!data?.pages) return [];
+    return data.pages.flatMap((page) => (Array.isArray(page) ? page : []));
+  }, [data]);
+
+  const totalCount = useMemo(() => {
+    const firstPage = data?.pages?.[0];
+    if (typeof firstPage?.total === "number") return firstPage.total;
+    return properties.length;
+  }, [data, properties.length]);
+
   const filteredProperties = useMemo(() => {
-    let result = [...propertiesData];
+    let result = properties.length > 0 ? [...properties] : [...getAllProperties()];
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -119,7 +185,11 @@ export default function Properties() {
     }
 
     if (selectedType !== "All") {
-      result = result.filter((p) => p.type === selectedType);
+      const target = selectedType.toLowerCase();
+      result = result.filter((p) => {
+        const pt = String(p.type || p.property_type || "").toLowerCase();
+        return pt === target;
+      });
     }
 
     if (selectedPrice !== "All") {
@@ -174,6 +244,7 @@ export default function Properties() {
 
     return result;
   }, [
+    properties,
     searchQuery,
     selectedType,
     selectedPrice,
@@ -188,6 +259,33 @@ export default function Properties() {
     selectedPrice !== "All" ||
     selectedBeds !== "All" ||
     selectedBaths !== "All";
+
+  const observerTarget = useRef(null);
+
+  useEffect(() => {
+    const target = observerTarget.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { root: null, rootMargin: "300px", threshold: 0.1 }
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const displayedProperties = filteredProperties;
+
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -291,9 +389,11 @@ export default function Properties() {
                 >
                   <option value="All">Type: All</option>
                   <option value="Apartment">Apartment</option>
-                  <option value="House">House & Villa</option>
-                  <option value="Villa">Villa</option>
                   <option value="Commercial">Commercial</option>
+                  <option value="Duplex">Duplex</option>
+                  <option value="Villa">Villa</option>
+                  <option value="House">House</option>
+                  <option value="Penthouse">Penthouse</option>
                   <option value="Land">Land</option>
                 </select>
                 <ChevronDown
@@ -387,7 +487,7 @@ export default function Properties() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-200/80">
             <div>
               <span className="text-xl sm:text-2xl font-bold font-serif text-[#0F172A]">
-                {filteredProperties.length} results
+                Showing {filteredProperties.length} of {hasActiveFilters ? filteredProperties.length : totalCount} results
               </span>
               <span className="text-xs sm:text-sm text-slate-500 ml-2">
                 available in prime Odisha locations
@@ -412,163 +512,113 @@ export default function Properties() {
             </div>
           </div>
 
-          {filteredProperties.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
-              <Building2 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <h3 className="text-lg font-bold text-slate-800">No properties found</h3>
-              <p className="text-sm text-slate-500 mt-1 max-w-sm mx-auto">
-                No listings matched your active filter criteria. Try adjusting your search keyword or clearing the filters.
-              </p>
-              <button
-                type="button"
-                onClick={clearFilters}
-                className="mt-5 px-6 py-2.5 rounded-full bg-[#F87907] text-white text-xs sm:text-sm font-semibold hover:bg-[#ea580c] transition-colors cursor-pointer"
-              >
-                Clear All Filters
-              </button>
-            </div>
-          ) : (
+          {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7 items-stretch">
-              {filteredProperties.map((prop) => (
-                <motion.article
-                  key={prop.id}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="group relative flex flex-col justify-between rounded-2xl bg-white border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.12)] hover:border-slate-300 transition-all duration-300 overflow-hidden"
+              {Array.from({ length: 6 }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="rounded-2xl bg-white border border-slate-200/90 p-4 shadow-sm animate-pulse space-y-4"
                 >
-                  <div>
-                    <div className="relative w-full h-[200px] sm:h-[215px] overflow-hidden bg-slate-100">
-                      <Link to={`/property/${prop.id}`} className="block w-full h-full">
-                        <img
-                          src={prop.image}
-                          alt={prop.title}
-                          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                          loading="lazy"
-                        />
-                      </Link>
-
-                      <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                        <span className="px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md shadow-sm bg-black/60 text-white border border-white/20">
-                          {prop.type}
-                        </span>
-
-                        <button
-                          type="button"
-                          onClick={() => handleShare(prop)}
-                          className="pointer-events-auto px-2.5 py-1 rounded-full bg-white/95 hover:bg-white text-slate-700 hover:text-[#F87907] text-xs font-medium flex items-center gap-1 shadow-md hover:shadow-lg transition-all duration-200 active:scale-95 cursor-pointer border border-white/40"
-                          title="Share property"
-                          aria-label="Share property"
-                        >
-                          {copiedId === prop.id ? (
-                            <>
-                              <Check size={13} className="text-emerald-500" />
-                              <span className="text-emerald-600 font-semibold">Copied!</span>
-                            </>
-                          ) : (
-                            <>
-                              <Share2 size={13} className="text-[#F87907]" />
-                              <span>Share</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-
-                      {prop.isFeatured && (
-                        <div className="absolute bottom-2.5 left-3 pointer-events-none">
-                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F87907] text-white shadow-sm flex items-center gap-1">
-                            <Sparkles size={11} />
-                            Featured
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="p-4 sm:p-5">
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <h2 className="text-base sm:text-[17px] font-bold text-[#0F172A] tracking-tight leading-snug group-hover:text-[#F87907] transition-colors line-clamp-2">
-                          <Link to={`/property/${prop.id}`}>
-                            {prop.title}
-                          </Link>
-                        </h2>
-                      </div>
-
-                      <div className="mb-3">
-                        {prop.pricePrefix && (
-                          <span className="block text-xs text-slate-500 font-normal">
-                            {prop.pricePrefix}
-                          </span>
-                        )}
-                        <span className="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight font-serif">
-                          {prop.price}
-                        </span>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 text-xs text-slate-600 mb-3 pb-3 border-b border-slate-100">
-                        {prop.beds > 0 && (
-                          <span className="flex items-center gap-1.5">
-                            <Bed size={14} className="text-slate-400" />
-                            <span>{prop.beds} beds</span>
-                          </span>
-                        )}
-                        {prop.baths > 0 && (
-                          <span className="flex items-center gap-1.5">
-                            <Bath size={14} className="text-slate-400" />
-                            <span>{prop.baths} baths</span>
-                          </span>
-                        )}
-                        {prop.sqft > 0 && (
-                          <span className="flex items-center gap-1.5">
-                            <Maximize size={13} className="text-slate-400" />
-                            <span>{prop.sqft} sq ft</span>
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-3.5">
-                        <MapPin size={13} className="shrink-0 text-[#F87907]" />
-                        <span className="truncate">{prop.location}</span>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                        {prop.badges.slice(0, 3).map((b, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2 py-0.5 rounded-md text-[10px] font-medium text-slate-600 bg-slate-100 border border-slate-200"
-                          >
-                            {b}
-                          </span>
-                        ))}
-                        {prop.badges.length > 3 && (
-                          <span className="text-[10px] text-slate-400 font-medium">
-                            +{prop.badges.length - 3} more
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                  <div className="w-full h-[200px] sm:h-[215px] bg-slate-200 rounded-xl" />
+                  <div className="space-y-2">
+                    <div className="h-5 bg-slate-200 rounded-md w-3/4" />
+                    <div className="h-4 bg-slate-100 rounded-md w-1/2" />
                   </div>
-
-                  <div className="px-4 sm:px-5 pb-4 pt-2 border-t border-slate-100/90 flex items-center justify-between">
-                    <Link
-                      to={`/property/${prop.id}`}
-                      className="text-xs font-semibold text-[#F87907] hover:text-[#ea580c] inline-flex items-center gap-1 group-hover:gap-1.5 transition-all cursor-pointer"
-                    >
-                      <span>Inquire Property</span>
-                      <ArrowRight size={13} />
-                    </Link>
-
-                    <a
-                      href="tel:+919348980948"
-                      className="w-7 h-7 rounded-full bg-slate-50 border border-slate-200/80 hover:bg-[#F87907] hover:text-white text-slate-600 flex items-center justify-center transition-colors cursor-pointer"
-                      title="Call agent"
-                    >
-                      <Phone size={13} />
-                    </a>
+                  <div className="h-7 bg-slate-200 rounded-md w-1/3" />
+                  <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+                    <div className="h-4 bg-slate-100 rounded w-16" />
+                    <div className="h-4 bg-slate-100 rounded w-16" />
+                    <div className="h-4 bg-slate-100 rounded w-20" />
                   </div>
-                </motion.article>
+                </div>
               ))}
             </div>
+          ) : filteredProperties.length === 0 ? (
+            <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+              <Building2 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+              <h3 className="text-lg font-bold text-slate-800">
+                {hasActiveFilters ? "No properties found" : "No properties available"}
+              </h3>
+              <p className="text-sm text-slate-500 mt-1 max-w-sm mx-auto">
+                {hasActiveFilters
+                  ? "No listings matched your active filter criteria. Try adjusting your search keyword or clearing the filters."
+                  : "No properties are currently available. Please check back later."}
+              </p>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="mt-5 px-6 py-2.5 rounded-full bg-[#F87907] text-white text-xs sm:text-sm font-semibold hover:bg-[#ea580c] transition-colors cursor-pointer"
+                >
+                  Clear All Filters
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7 items-stretch">
+                {displayedProperties.map((prop) => (
+                  <PropertyCard
+                    key={prop.id || prop.slug}
+                    property={prop}
+                    copiedId={copiedId}
+                    onCopy={handleCopyLink}
+                    onShare={handleShare}
+                    footer={
+                      <div className="px-4 sm:px-5 pb-4 pt-2 border-t border-slate-100/90 flex items-center justify-between">
+                        <Link
+                          to={`/property/${prop.slug || prop.id}`}
+                          className="text-xs font-semibold text-[#F87907] hover:text-[#ea580c] inline-flex items-center gap-1 group-hover:gap-1.5 transition-all cursor-pointer"
+                        >
+                          <span>Inquire Property</span>
+                          <ArrowRight size={13} />
+                        </Link>
+
+                        <a
+                          href="tel:+919348980948"
+                          className="w-7 h-7 rounded-full bg-slate-50 border border-slate-200/80 hover:bg-[#F87907] hover:text-white text-slate-600 flex items-center justify-center transition-colors cursor-pointer"
+                          title="Call agent"
+                        >
+                          <Phone size={13} />
+                        </a>
+                      </div>
+                    }
+                  />
+                ))}
+              </div>
+
+              <div ref={observerTarget} className="h-6 w-full" />
+
+              {isFetchingNextPage && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center justify-center gap-2.5 py-8 text-sm font-semibold text-slate-500"
+                >
+                  <Loader2 size={18} className="animate-spin text-[#F87907]" />
+                  <span>Loading next properties...</span>
+                </motion.div>
+              )}
+
+              {hasNextPage && !isFetchingNextPage && (
+                <div className="flex justify-center pt-8 pb-4">
+                  <button
+                    type="button"
+                    onClick={handleLoadMore}
+                    className="px-6 py-3 rounded-full bg-slate-900 hover:bg-[#F87907] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-xl transition-all cursor-pointer flex items-center gap-2 active:scale-98"
+                  >
+                    <span>Load Next Properties</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              )}
+
+              {!hasNextPage && filteredProperties.length > 0 && (
+                <div className="text-center pt-8 pb-4 text-xs font-semibold text-slate-400">
+                  You have viewed all {filteredProperties.length} properties
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
@@ -608,6 +658,10 @@ export default function Properties() {
                 <img
                   src={item.image}
                   alt={item.title}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = fallbackPropertyImg;
+                  }}
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                   loading="lazy"
                 />

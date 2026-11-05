@@ -1,157 +1,29 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { getProperties } from "../../../services/propertyService";
+import { getAllProperties } from "../../../utils/propertyStorage";
+import PropertyCard from "../../common/PropertyCard";
 import {
-  Bed,
-  Bath,
-  Maximize,
-  MapPin,
-  Share2,
+  Building2,
   Check,
-  Download,
-  Layers,
   ArrowRight,
   ChevronLeft,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
 
-const propPanorama =
-  "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80";
-const propSaiCommercial =
-  "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80";
-const propSaiResidency =
-  "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80";
-
-const propertiesData = [
-  {
-    id: 1,
-    title: "Codename Panorama - Luxury Apartments...",
-    category: "Apartments",
-    tag: "Luxury",
-    tagType: "dark",
-    isFeatured: false,
-    price: "₹1.38 Cr",
-    pricePrefix: null,
-    image: propPanorama,
-    specs: {
-      beds: "5 beds",
-      baths: "5 baths",
-      area: "3810 sq ft",
-    },
-    location: "Kalinga Vihar, Bhubaneswar",
-    badges: ["2 BHK", "3 BHK + Servant"],
-    showSpecsLabel: false,
-    activeDotIndex: 0,
-    page: 0,
-  },
-  {
-    id: 2,
-    title: "Sai Krishna Residency - Commercial Units",
-    category: "Commercials",
-    tag: "Commercial",
-    tagType: "dark",
-    isFeatured: false,
-    price: "₹42 L*",
-    pricePrefix: "Starts from",
-    image: propSaiCommercial,
-    specs: {
-      beds: "5 beds",
-      baths: null,
-      area: "3810 sq ft",
-    },
-    location: null,
-    badges: ["For Sale", "Commercial Unit"],
-    showSpecsLabel: true,
-    activeDotIndex: 1,
-    page: 0,
-  },
-  {
-    id: 3,
-    title: "Sai Krishna Residency - 1|2|3 BHK...",
-    category: "Apartments",
-    tag: "Featured",
-    tagType: "light",
-    isFeatured: true,
-    price: "₹4,200,000",
-    pricePrefix: null,
-    image: propSaiResidency,
-    specs: {
-      beds: null,
-      baths: "Baths",
-      area: "1451 sq ft",
-    },
-    location: "Near CV Raman College, Bhubaneswar, Odisha",
-    badges: ["1 BHK Apartment", "2 BHK Apartment"],
-    showSpecsLabel: false,
-    activeDotIndex: 2,
-    page: 0,
-  },
-  {
-    id: 4,
-    title: "Royal Palm Enclave - Modern Villas...",
-    category: "Apartments",
-    tag: "Luxury",
-    tagType: "dark",
-    isFeatured: false,
-    price: "₹2.10 Cr",
-    pricePrefix: null,
-    image: propPanorama,
-    specs: {
-      beds: "4 beds",
-      baths: "4 baths",
-      area: "3200 sq ft",
-    },
-    location: "Patia, Bhubaneswar",
-    badges: ["3 BHK Villa", "4 BHK Villa"],
-    showSpecsLabel: false,
-    activeDotIndex: 0,
-    page: 1,
-  },
-  {
-    id: 5,
-    title: "Utkal Signature - Retail & Commercial Hub",
-    category: "Commercials",
-    tag: "Commercial",
-    tagType: "dark",
-    isFeatured: false,
-    price: "₹85 L*",
-    pricePrefix: "Starts from",
-    image: propSaiCommercial,
-    specs: {
-      beds: "6 units",
-      baths: null,
-      area: "4200 sq ft",
-    },
-    location: null,
-    badges: ["Ready to Move", "High ROI"],
-    showSpecsLabel: true,
-    activeDotIndex: 1,
-    page: 1,
-  },
-  {
-    id: 6,
-    title: "Metro Heights - Premium Condominiums",
-    category: "Apartments",
-    tag: "Featured",
-    tagType: "light",
-    isFeatured: true,
-    price: "₹6,800,000",
-    pricePrefix: null,
-    image: propSaiResidency,
-    specs: {
-      beds: "3 beds",
-      baths: "3 Baths",
-      area: "1950 sq ft",
-    },
-    location: "Khandagiri, Bhubaneswar, Odisha",
-    badges: ["2 BHK Luxury", "3 BHK Penthouse"],
-    showSpecsLabel: false,
-    activeDotIndex: 2,
-    page: 1,
-  },
+const categories = [
+  "All",
+  "Apartment",
+  "Commercial",
+  "Duplex",
+  "Villa",
+  "House",
+  "Penthouse",
+  "Land",
 ];
-
-const categories = ["All", "Apartments", "Commercials"];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -189,8 +61,43 @@ export default function FeaturedProperties() {
   const [copiedId, setCopiedId] = useState(null);
   const [toastMessage, setToastMessage] = useState("");
 
+  const handleCopyLink = async (prop) => {
+    const shareUrl = `${window.location.origin}/property/${prop.slug || prop.id}`;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+      setCopiedId(prop.id);
+      setToastMessage("Property link copied to clipboard!");
+      setTimeout(() => setCopiedId(null), 2500);
+      setTimeout(() => setToastMessage(""), 3000);
+    } catch {
+      const textArea = document.createElement("textarea");
+      textArea.value = shareUrl;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setCopiedId(prop.id);
+      setToastMessage("Property link copied to clipboard!");
+      setTimeout(() => setCopiedId(null), 2500);
+      setTimeout(() => setToastMessage(""), 3000);
+    }
+  };
+
   const handleShare = async (prop) => {
-    const shareUrl = `${window.location.origin}/properties?id=${prop.id}`;
+    const shareUrl = `${window.location.origin}/property/${prop.slug || prop.id}`;
     const shareData = {
       title: prop.title,
       text: `Check out ${prop.title} (${prop.price}) on Treasure Island!`,
@@ -229,25 +136,133 @@ export default function FeaturedProperties() {
     }
   };
 
-  const categoryMatched =
-    activeCategory === "All"
-      ? propertiesData
-      : propertiesData.filter((p) => p.category === activeCategory);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteQuery({
+    queryKey: ["properties", "featured_home", activeCategory],
+    queryFn: ({ pageParam = 1 }) =>
+      getProperties({
+        page: pageParam,
+        per_page: 10,
+        property_type: activeCategory === "All" ? undefined : activeCategory,
+      }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const currentPage = Number(lastPage?.current_page) || 1;
+      const lastPageNum = Number(lastPage?.last_page) || 1;
+      return currentPage < lastPageNum ? currentPage + 1 : undefined;
+    },
+  });
 
-  const totalPages = Math.max(1, Math.ceil(categoryMatched.length / 3));
+  const properties = useMemo(() => {
+    if (!data?.pages) return [];
+    return data.pages.flatMap((page) => (Array.isArray(page) ? page : []));
+  }, [data]);
+
+  const activeProperties = properties.length > 0 ? properties : getAllProperties();
+
+  const formattedList = useMemo(() => {
+    return activeProperties.map((p, idx) => ({
+      id: p.id,
+      slug: p.slug,
+      title: p.title,
+      category: p.property_type || p.type || p.category || "Apartment",
+      type: p.property_type || p.type || "Apartment",
+      property_type: p.property_type || p.type || "Apartment",
+      tag:
+        p.isFeatured || p.is_featured
+          ? "Featured"
+          : idx % 2 === 0
+          ? "Luxury"
+          : "Exclusive",
+      tagType: p.isFeatured || p.is_featured ? "light" : "dark",
+      isFeatured: Boolean(p.isFeatured ?? p.is_featured),
+      is_negotiable: Boolean(p.is_negotiable),
+      price: p.price,
+      pricePrefix: p.pricePrefix || p.price_type || null,
+      image: p.image || p.cover_image,
+      specs: {
+        beds: p.bedrooms && p.bedrooms !== "Custom Units" ? p.bedrooms : p.beds > 0 ? `${p.beds} BHK` : "",
+        baths: p.bathrooms
+          ? String(p.bathrooms).includes("bath") || String(p.bathrooms).includes("Bath")
+          ? p.bathrooms
+          : `${p.bathrooms} Baths`
+          : p.baths > 0
+          ? `${p.baths} Baths`
+          : "",
+        area: (p.property_area || p.sqft) ? `${p.property_area || p.sqft} ${p.area_unit || "Sq. Ft."}` : "",
+      },
+      location: p.location,
+      badges: (() => {
+        const list = Array.isArray(p.badges) && p.badges.length > 0
+          ? [...p.badges]
+          : [p.property_type || p.type || "Apartment", p.listing_type || "For Sale"];
+        const pType = p.property_type || p.type;
+        if (pType && !list.includes(pType)) {
+          list.push(pType);
+        }
+        return list;
+      })(),
+      showSpecsLabel: false,
+      activeDotIndex: idx % 3,
+    }));
+  }, [activeProperties]);
+
+  const categoryMatched = useMemo(() => {
+    if (activeCategory === "All") return formattedList;
+    const target = activeCategory.trim().toLowerCase().replace(/s$/, "");
+    return formattedList.filter((p) => {
+      const pType = String(p.type || p.property_type || "").trim().toLowerCase().replace(/s$/, "");
+      const pCat = String(p.category || "").trim().toLowerCase().replace(/s$/, "");
+      return pType === target || pCat === target;
+    });
+  }, [formattedList, activeCategory]);
+
+  const ITEMS_PER_PAGE = 10;
+  const totalPages = Math.max(1, Math.ceil(categoryMatched.length / ITEMS_PER_PAGE));
   const currentPage = Math.min(pageIndex, totalPages - 1);
-  const displayedProperties = categoryMatched.slice(
-    currentPage * 3,
-    currentPage * 3 + 3,
-  );
+  const displayedProperties = useMemo(() => {
+    return categoryMatched.slice(
+      currentPage * ITEMS_PER_PAGE,
+      currentPage * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
+    );
+  }, [categoryMatched, currentPage]);
 
   const handlePrev = () => {
-    setPageIndex((prev) => (prev > 0 ? prev - 1 : totalPages - 1));
+    setPageIndex((prev) => Math.max(0, prev - 1));
   };
 
-  const handleNext = () => {
-    setPageIndex((prev) => (prev < totalPages - 1 ? prev + 1 : 0));
+  const handleNext = async () => {
+    if (currentPage >= totalPages - 1 && hasNextPage && !isFetchingNextPage) {
+      await fetchNextPage();
+      setPageIndex((prev) => prev + 1);
+    } else if (currentPage < totalPages - 1) {
+      setPageIndex((prev) => prev + 1);
+    }
   };
+
+  const observerTarget = useRef(null);
+
+  useEffect(() => {
+    const target = observerTarget.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { root: null, rootMargin: "300px", threshold: 0.1 }
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <section className="relative w-full bg-[#F4F5F7] px-4 sm:px-8 lg:px-10 pt-10 sm:pt-14 pb-18 sm:pb-24 text-slate-800 overflow-hidden select-none">
@@ -280,43 +295,59 @@ export default function FeaturedProperties() {
             </p>
           </motion.div>
 
-          <div className="hidden md:flex items-center gap-2 absolute right-0 bottom-1">
-            <button
-              type="button"
-              onClick={handlePrev}
-              className="inline-flex items-center gap-1 text-xs sm:text-sm font-medium text-slate-500 hover:text-[#F87907] transition-colors cursor-pointer group"
-              aria-label="Previous page"
-            >
-              <ChevronLeft
-                size={16}
-                className="transition-transform group-hover:-translate-x-0.5"
-              />
-              <span>Previous</span>
-            </button>
-            <span className="text-slate-300 text-sm">/</span>
-            <button
-              type="button"
-              onClick={handleNext}
-              className="inline-flex items-center gap-1 text-xs sm:text-sm font-medium text-slate-500 hover:text-[#F87907] transition-colors cursor-pointer group"
-              aria-label="Next page"
-            >
-              <span>Next</span>
-              <ChevronRight
-                size={16}
-                className="transition-transform group-hover:translate-x-0.5"
-              />
-            </button>
-          </div>
+          {(totalPages > 1 || hasNextPage) && (
+            <div className="flex items-center gap-2 absolute right-0 bottom-1">
+              <button
+                type="button"
+                onClick={handlePrev}
+                disabled={currentPage <= 0}
+                className={`inline-flex items-center gap-1 text-xs sm:text-sm font-medium transition-colors cursor-pointer group ${
+                  currentPage <= 0
+                    ? "text-slate-300 cursor-not-allowed opacity-50"
+                    : "text-slate-500 hover:text-[#F87907]"
+                }`}
+                aria-label="Previous page"
+              >
+                <ChevronLeft
+                  size={16}
+                  className="transition-transform group-hover:-translate-x-0.5"
+                />
+                <span>Previous</span>
+              </button>
+              <span className="text-slate-400 text-xs font-semibold">
+                {currentPage + 1} / {totalPages}
+              </span>
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={currentPage >= totalPages - 1 && !hasNextPage}
+                className={`inline-flex items-center gap-1 text-xs sm:text-sm font-medium transition-colors cursor-pointer group ${
+                  currentPage >= totalPages - 1 && !hasNextPage
+                    ? "text-slate-300 cursor-not-allowed opacity-50"
+                    : "text-slate-500 hover:text-[#F87907]"
+                }`}
+                aria-label="Next page"
+              >
+                <span>Next</span>
+                <ChevronRight
+                  size={16}
+                  className="transition-transform group-hover:translate-x-0.5"
+                />
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 sm:mb-10 pb-2">
           <div className="text-xs sm:text-sm font-medium italic text-slate-500">
             Showing{" "}
-            <span className="font-semibold text-[#F87907] not-italic">27</span>{" "}
-            exclusive properties
+            <span className="font-semibold text-[#F87907] not-italic">
+              {displayedProperties.length}
+            </span>{" "}
+            exclusive {activeCategory === "All" ? "properties" : `${activeCategory} properties`}
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto pb-1 max-w-full">
             {categories.map((cat) => {
               const isActive = activeCategory === cat;
               return (
@@ -340,194 +371,69 @@ export default function FeaturedProperties() {
           </div>
         </div>
 
-        <motion.div
-          key={`${activeCategory}-${currentPage}`}
-          layout
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7 items-stretch"
-        >
-          <AnimatePresence mode="popLayout">
-            {displayedProperties.map((prop) => {
-              return (
-                <motion.div
+        {isLoading && properties.length === 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7 items-stretch">
+            {[0, 1, 2].map((idx) => (
+              <div
+                key={idx}
+                className="rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm animate-pulse space-y-4"
+              >
+                <div className="w-full h-[190px] sm:h-[205px] bg-slate-200 rounded-xl" />
+                <div className="space-y-2">
+                  <div className="h-5 bg-slate-200 rounded-md w-3/4" />
+                  <div className="h-4 bg-slate-100 rounded-md w-1/2" />
+                </div>
+                <div className="h-7 bg-slate-200 rounded-md w-1/3" />
+                <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+                  <div className="h-4 bg-slate-100 rounded w-16" />
+                  <div className="h-4 bg-slate-100 rounded w-16" />
+                  <div className="h-4 bg-slate-100 rounded w-20" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : categoryMatched.length === 0 ? (
+          <div className="text-center py-16 bg-white rounded-2xl border border-slate-200/80 p-8 shadow-sm">
+            <div className="w-14 h-14 rounded-2xl bg-[#FFF4EB] text-[#F87907] flex items-center justify-center mx-auto mb-3.5">
+              <Building2 size={28} />
+            </div>
+            <h3 className="text-lg font-bold text-slate-800">No properties available</h3>
+            <p className="text-sm text-slate-500 mt-1 max-w-sm mx-auto">
+              No properties have been added yet. Please check back later or contact us for upcoming listings.
+            </p>
+          </div>
+        ) : (
+          <motion.div
+            key={`${activeCategory}-${currentPage}`}
+            layout
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7 items-stretch"
+          >
+            <AnimatePresence mode="popLayout">
+              {displayedProperties.map((prop) => (
+                <PropertyCard
                   key={prop.id}
-                  layout
+                  property={prop}
+                  copiedId={copiedId}
+                  onCopy={handleCopyLink}
+                  onShare={handleShare}
                   variants={cardVariants}
-                  whileHover={{ y: -6 }}
-                  className="group relative flex flex-col justify-between rounded-2xl bg-white border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.12)] hover:border-slate-300 transition-all duration-300 overflow-hidden"
-                >
-                  <div>
-                    <div className="relative w-full h-[190px] sm:h-[205px] overflow-hidden bg-slate-100">
-                      <Link to={`/property/${prop.id}`} className="block w-full h-full">
-                        <img
-                          src={prop.image}
-                          alt={prop.title}
-                          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                        />
-                      </Link>
+                />
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
 
-                      <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                        {prop.tag && (
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md shadow-sm ${
-                              prop.tagType === "dark"
-                                ? "bg-black/60 text-white border border-white/20"
-                                : "bg-white/95 text-slate-800 border border-slate-200"
-                            }`}
-                          >
-                            {prop.tag}
-                          </span>
-                        )}
+        <div ref={observerTarget} className="h-2 w-full pointer-events-none" />
 
-                        <button
-                          type="button"
-                          onClick={() => handleShare(prop)}
-                          className="pointer-events-auto px-2.5 py-1 rounded-full bg-white/95 hover:bg-white text-slate-700 hover:text-[#F87907] text-xs font-medium flex items-center gap-1 shadow-md hover:shadow-lg transition-all duration-200 active:scale-95 cursor-pointer border border-white/40"
-                          title="Share this property"
-                          aria-label="Share property"
-                        >
-                          {copiedId === prop.id ? (
-                            <>
-                              <Check size={13} className="text-emerald-500" />
-                              <span className="text-emerald-600 font-semibold">Copied!</span>
-                            </>
-                          ) : (
-                            <>
-                              <Share2 size={13} className="text-[#F87907]" />
-                              <span>Share</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-
-                      <div className="absolute bottom-2.5 left-0 right-0 flex items-center justify-center gap-1.5 pointer-events-none">
-                        {[0, 1, 2].map((dotIdx) => (
-                          <span
-                            key={dotIdx}
-                            className={`rounded-full transition-all duration-300 ${
-                              dotIdx === prop.activeDotIndex
-                                ? "w-4 h-1.5 bg-white shadow-sm"
-                                : "w-1.5 h-1.5 bg-white/60"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="p-4 sm:p-5">
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <h3 className="text-base sm:text-[17px] font-bold text-[#0F172A] tracking-tight leading-snug group-hover:text-[#F87907] transition-colors line-clamp-1">
-                          <Link to={`/property/${prop.id}`}>
-                            {prop.title}
-                          </Link>
-                        </h3>
-
-                        <button
-                          type="button"
-                          onClick={() => handleShare(prop)}
-                          className="shrink-0 w-7 h-7 rounded-full border border-slate-200/90 hover:border-[#F87907] bg-slate-50/80 hover:bg-orange-50 text-slate-500 hover:text-[#F87907] flex items-center justify-center transition-all duration-200 active:scale-95 cursor-pointer"
-                          title="Share property"
-                          aria-label="Share property"
-                        >
-                          {copiedId === prop.id ? (
-                            <Check size={13} className="text-emerald-500" />
-                          ) : (
-                            <Share2 size={13} />
-                          )}
-                        </button>
-                      </div>
-
-                      <div className="mb-3">
-                        {prop.pricePrefix && (
-                          <span className="block text-xs text-slate-500 font-normal">
-                            {prop.pricePrefix}
-                          </span>
-                        )}
-                        <span className="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight">
-                          {prop.price}
-                        </span>
-                      </div>
-
-                      {prop.showSpecsLabel && (
-                        <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
-                          Specs
-                        </div>
-                      )}
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-600 mb-3 pb-1 border-b border-slate-100">
-                        {prop.specs.beds && (
-                          <span className="flex items-center gap-1.5">
-                            <Bed size={14} className="text-slate-400" />
-                            <span>{prop.specs.beds}</span>
-                          </span>
-                        )}
-                        {prop.specs.baths && (
-                          <span className="flex items-center gap-1.5">
-                            <Bath size={14} className="text-slate-400" />
-                            <span>{prop.specs.baths}</span>
-                          </span>
-                        )}
-                        {prop.specs.area && (
-                          <span className="flex items-center gap-1.5">
-                            <Maximize size={13} className="text-slate-400" />
-                            <span>{prop.specs.area}</span>
-                          </span>
-                        )}
-                      </div>
-
-                      {prop.location && (
-                        <div className="flex items-center justify-between text-xs text-slate-500 mb-3.5">
-                          <span className="flex items-center gap-1.5 truncate pr-2">
-                            <MapPin
-                              size={13}
-                              className="shrink-0 text-slate-400"
-                            />
-                            <span className="truncate">{prop.location}</span>
-                          </span>
-
-                          {prop.id === 1 && (
-                            <div className="flex items-center gap-2 shrink-0 text-slate-400">
-                              <Download
-                                size={13}
-                                className="hover:text-slate-700 cursor-pointer transition-colors"
-                              />
-                              <Layers
-                                size={13}
-                                className="hover:text-slate-700 cursor-pointer transition-colors"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => handleShare(prop)}
-                                className="hover:text-[#F87907] cursor-pointer transition-colors"
-                                title="Share"
-                              >
-                                <Share2 size={13} />
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {prop.badges && prop.badges.length > 0 && (
-                        <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                          {prop.badges.map((b, idx) => (
-                            <span
-                              key={idx}
-                              className="px-2.5 py-0.5 rounded-md text-[11px] font-medium text-slate-600 bg-slate-100 border border-slate-200"
-                            >
-                              {b}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        </motion.div>
+        {isFetchingNextPage && (
+          <div className="flex items-center justify-center gap-2 py-4 text-xs font-semibold text-slate-500">
+            <Loader2 size={16} className="animate-spin text-[#F87907]" />
+            <span>Loading more properties...</span>
+          </div>
+        )}
 
         <AnimatePresence>
           {toastMessage && (
@@ -543,24 +449,26 @@ export default function FeaturedProperties() {
           )}
         </AnimatePresence>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex justify-center mt-12 sm:mt-16"
-        >
-          <Link
-            to="/properties"
-            className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#F9770B] via-[#F86E00] to-[#EA580C] px-8 sm:px-9 py-3 sm:py-3.5 text-sm sm:text-base font-semibold text-white shadow-[0_8px_25px_rgba(249,119,11,0.38)] transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_12px_32px_rgba(249,119,11,0.5)] active:scale-[0.98] cursor-pointer"
+        {categoryMatched.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex justify-center mt-12 sm:mt-16"
           >
-            <span>Show More</span>
-            <ArrowRight
-              size={18}
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            />
-          </Link>
-        </motion.div>
+            <Link
+              to="/properties"
+              className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#F9770B] via-[#F86E00] to-[#EA580C] px-8 sm:px-9 py-3 sm:py-3.5 text-sm sm:text-base font-semibold text-white shadow-[0_8px_25px_rgba(249,119,11,0.38)] transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_12px_32px_rgba(249,119,11,0.5)] active:scale-[0.98] cursor-pointer"
+            >
+              <span>Show More</span>
+              <ArrowRight
+                size={18}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              />
+            </Link>
+          </motion.div>
+        )}
       </div>
     </section>
   );

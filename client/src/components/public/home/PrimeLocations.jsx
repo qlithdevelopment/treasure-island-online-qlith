@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { MapPin, ArrowUpRight } from "lucide-react";
 import primeLocationsBg from "../../../assets/home/prime_locations_bg.jpg";
+import {
+  apartment1,
+  modernResidence,
+  villa1,
+  villa2,
+  interiorDining,
+  oceanVilla,
+} from "../../../assets/properties";
 
 const primeLocations = [
   {
@@ -9,48 +16,42 @@ const primeLocations = [
     name: "Patia",
     propertiesCount: "45+ Properties",
     description: "IT Corridor & Modern High-Rises",
-    image:
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=700&q=80",
+    image: apartment1,
   },
   {
     id: 2,
     name: "Chandrasekharpur",
     propertiesCount: "38+ Properties",
     description: "Prime Corporate & Elite Residential",
-    image:
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=700&q=80",
+    image: modernResidence,
   },
   {
     id: 3,
     name: "Khandagiri",
     propertiesCount: "29+ Properties",
     description: "Heritage Foothills & Green Enclaves",
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=700&q=80",
+    image: villa1,
   },
   {
     id: 4,
     name: "Pahala",
     propertiesCount: "34+ Properties",
     description: "Expressway Boulevard Townships",
-    image:
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=700&q=80",
+    image: villa2,
   },
   {
     id: 5,
     name: "Tamando",
     propertiesCount: "26+ Properties",
     description: "South Growth Hub & Gated Villas",
-    image:
-      "https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?auto=format&fit=crop&w=700&q=80",
+    image: interiorDining,
   },
   {
     id: 6,
     name: "Jatni",
     propertiesCount: "22+ Properties",
     description: "Peaceful Suburban Retreat & IIT Zone",
-    image:
-      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=700&q=80",
+    image: oceanVilla,
   },
 ];
 
@@ -148,17 +149,6 @@ export default function PrimeLocations() {
                   />
 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent transition-opacity duration-300 group-hover:from-black/90" />
-
-                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-white bg-black/60 backdrop-blur-md border border-white/20 flex items-center gap-1">
-                      <MapPin size={10} className="text-[#F87907]" />
-                      {loc.propertiesCount}
-                    </span>
-
-                    <span className="w-6 h-6 rounded-full bg-[#F87907] text-white flex items-center justify-center shadow-sm">
-                      <ArrowUpRight size={12} />
-                    </span>
-                  </div>
 
                   <div className="absolute bottom-2.5 sm:bottom-3 left-2.5 sm:left-3 right-2.5 sm:right-3 z-10">
                     <div className="w-full py-1.5 sm:py-2 px-2 bg-white text-[#0F172A] font-semibold text-xs sm:text-[13px] rounded-lg sm:rounded-xl text-center shadow-md transition-all duration-300 group-hover:bg-[#F87907] group-hover:text-white truncate">

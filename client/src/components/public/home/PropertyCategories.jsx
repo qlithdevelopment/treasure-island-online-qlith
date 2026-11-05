@@ -1,16 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ChevronRight } from "lucide-react";
-
-const imgApartment =
-  "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80";
-const imgLand =
-  "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80";
-const imgHouse =
-  "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80";
-const imgVilla =
-  "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80";
+import {
+  apartment1 as imgApartment,
+  landPlot as imgLand,
+  duplexHouse as imgHouse,
+  oceanVilla as imgVilla,
+} from "../../../assets/properties";
 
 const categories = [
   {
@@ -44,7 +40,6 @@ const categories = [
     description:
       "Prime land plots ideal for residential and commercial development.",
     image: imgLand,
-    hasExplore: true,
     icon: (
       <svg
         viewBox="0 0 48 48"
@@ -136,7 +131,7 @@ const cardVariants = {
 };
 
 export default function PropertyCategories() {
-  const [activeId, setActiveId] = useState(2);
+  const [activeId, setActiveId] = useState(null);
 
   return (
     <section className="relative w-full bg-gradient-to-b from-[#080E14] via-[#0D1721] to-[#0A121A] px-4 sm:px-8 lg:px-10 pt-12 sm:pt-16 pb-24 sm:pb-32 text-white overflow-hidden select-none border-b border-white/5">
@@ -203,7 +198,7 @@ export default function PropertyCategories() {
                 className={`group relative flex flex-col justify-between rounded-2xl transition-all duration-300 overflow-hidden cursor-pointer ${
                   isHighlighted
                     ? "bg-[#0E1B26]/90 border-2 border-[#F87907] ring-4 ring-[#F87907]/25 shadow-[0_16px_40px_rgba(248,121,7,0.22)] scale-[1.02] z-10"
-                    : "bg-[#0B151F]/80 backdrop-blur-md border border-white/10 shadow-[0_8px_28px_rgba(0,0,0,0.35)] hover:border-white/25 hover:shadow-[0_12px_36px_rgba(0,0,0,0.5)]"
+                    : "bg-[#0B151F]/80 backdrop-blur-md border border-white/10 shadow-[0_8px_28px_rgba(0,0,0,0.35)] hover:border-[#F87907]/70 hover:shadow-[0_12px_36px_rgba(248,121,7,0.2)]"
                 }`}
               >
                 <div>
@@ -227,7 +222,10 @@ export default function PropertyCategories() {
                     </div>
                   </div>
 
-                  <div className="p-5 sm:p-6 text-center">
+                  <Link
+                    to={`/properties?type=${encodeURIComponent(cat.title)}`}
+                    className="p-5 sm:p-6 text-center block"
+                  >
                     <h3
                       className={`text-xl font-bold tracking-tight mb-2 transition-colors ${
                         isHighlighted ? "text-[#F87907]" : "text-white"
@@ -239,17 +237,7 @@ export default function PropertyCategories() {
                     <p className="text-xs sm:text-[13px] text-slate-300 leading-relaxed font-normal">
                       {cat.description}
                     </p>
-
-                    {cat.hasExplore && (
-                      <Link
-                        to="/properties"
-                        className="inline-flex items-center justify-center gap-1 text-xs font-semibold text-[#F87907] hover:text-[#fb923c] hover:gap-1.5 transition-all mt-4 cursor-pointer"
-                      >
-                        <span>Explore</span>
-                        <ChevronRight size={14} />
-                      </Link>
-                    )}
-                  </div>
+                  </Link>
                 </div>
               </motion.div>
             );

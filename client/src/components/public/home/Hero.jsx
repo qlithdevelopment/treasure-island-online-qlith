@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Play, ChevronLeft, ChevronRight } from "lucide-react";
 
 import heroBg from "../../../assets/home/hero_bg_hd.jpg";
-
-const villa1 = "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80";
-const villa2 = "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80";
-const villa3 = "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80";
-const villa4 = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80";
+import {
+  oceanVilla as villa1,
+  villa2,
+  modernResidence as villa3,
+  villa1 as villa4,
+} from "../../../assets/properties";
 
 const villas = [
   {

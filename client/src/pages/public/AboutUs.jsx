@@ -18,9 +18,14 @@ import {
 } from "lucide-react";
 import PageHero from "../../components/common/PageHero";
 import sujitImg from "../../assets/Sujit_Mohapatra.png";
-
-const aboutHeroImg =
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=85";
+import {
+  villa1 as aboutHeroImg,
+  landPlot,
+  apartment1,
+  oceanVilla,
+  duplexHouse,
+  commercialTower,
+} from "../../assets/properties";
 
 const propertySpecialties = [
   {
@@ -29,8 +34,7 @@ const propertySpecialties = [
     tag: "High Capital Growth",
     description:
       "Prime approved land parcels and plotted developments ideal for immediate home construction or long-term capital appreciation.",
-    image:
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80",
+    image: landPlot,
     filterParam: "Land",
   },
   {
@@ -39,8 +43,7 @@ const propertySpecialties = [
     tag: "High-Rise Living",
     description:
       "Modern flats and high-rise residences with world-class amenities, premium finishes, and strategic city connectivity.",
-    image:
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+    image: apartment1,
     filterParam: "Apartment",
   },
   {
@@ -49,8 +52,7 @@ const propertySpecialties = [
     tag: "Spacious Comfort",
     description:
       "Contemporary two-level family residences engineered for spacious luxury, privacy, and modern living standards.",
-    image:
-      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80",
+    image: oceanVilla,
     filterParam: "House",
   },
   {
@@ -59,8 +61,7 @@ const propertySpecialties = [
     tag: "Bespoke Freedom",
     description:
       "Bespoke standalone houses and custom-designed villas set in peaceful, upscale residential enclaves.",
-    image:
-      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80",
+    image: duplexHouse,
     filterParam: "House",
   },
   {
@@ -69,8 +70,7 @@ const propertySpecialties = [
     tag: "Prime High-Yield ROI",
     description:
       "High-visibility retail shops, corporate office complexes, and high-yield commercial investments across prime commercial hubs.",
-    image:
-      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+    image: commercialTower,
     filterParam: "Commercial",
   },
   {
@@ -79,8 +79,7 @@ const propertySpecialties = [
     tag: "Eco Sustainable",
     description:
       "High-potential agro-farmland and serene green estate acreage providing sustainable growth, peace of mind, and lasting value.",
-    image:
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80",
+    image: landPlot,
     filterParam: "Land",
   },
 ];
