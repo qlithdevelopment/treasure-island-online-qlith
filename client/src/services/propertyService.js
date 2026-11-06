@@ -145,7 +145,7 @@ export const formatProperty = (item) => {
       return villa1;
     }
     const cleanPath = trimmed.replace(/^\/+/, "");
-    return `http://localhost:8000/storage/${cleanPath}`;
+    return `${import.meta.env.VITE_BACKEND_URL}/storage/${cleanPath}`;
   };
 
   const coverImg = resolveImage(item.cover_image || item.image);
@@ -217,7 +217,7 @@ export const formatProperty = (item) => {
       return trimmed;
     }
     const cleanPath = trimmed.replace(/^\/+/, "");
-    return `http://localhost:8000/storage/${cleanPath}`;
+    return `${import.meta.env.VITE_BACKEND_URL}/storage/${cleanPath}`;
   };
 
   let floorPlans = [];
