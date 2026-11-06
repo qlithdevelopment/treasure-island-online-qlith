@@ -9,6 +9,15 @@ import {
   ArrowRight,
 } from "lucide-react";
 
+import {
+  oceanVilla,
+  villa1,
+  villa2,
+  interiorLiving,
+  interiorDining,
+  modernResidence,
+} from "../../../assets/properties";
+
 const galleryItems = [
   {
     id: 1,
@@ -16,8 +25,7 @@ const galleryItems = [
     subtitle: "Oceanfront Contemporary Estate with Infinity Pool",
     category: "Villas",
     location: "Marine Drive, Puri Coast",
-    image:
-      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1400&q=85",
+    image: oceanVilla,
     badge: "Signature Project",
     isFeatured: true,
   },
@@ -27,8 +35,7 @@ const galleryItems = [
     subtitle: "Panoramic Sky Lounge & Private Terrace",
     category: "Penthouses",
     location: "Patia Hills, Bhubaneswar",
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=85",
+    image: villa1,
     badge: "Penthouse",
     isFeatured: false,
   },
@@ -38,8 +45,7 @@ const galleryItems = [
     subtitle: "Contemporary Glass Pavilion & Minimalist Grounds",
     category: "Exteriors",
     location: "Khandagiri Green Valley",
-    image:
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=85",
+    image: villa2,
     badge: "Exterior",
     isFeatured: false,
   },
@@ -49,8 +55,7 @@ const galleryItems = [
     subtitle: "Double-Height Italian Marble Lounge & Bespoke Woodwork",
     category: "Interiors",
     location: "Jayadev Vihar Heights",
-    image:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85",
+    image: interiorLiving,
     badge: "Interior",
     isFeatured: false,
   },
@@ -60,8 +65,7 @@ const galleryItems = [
     subtitle: "Private Heated Pool with Sunken Firepit Deck",
     category: "Villas",
     location: "Dhauli Eco Enclave",
-    image:
-      "https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?auto=format&fit=crop&w=1000&q=85",
+    image: interiorDining,
     badge: "Villa",
     isFeatured: false,
   },
@@ -71,8 +75,7 @@ const galleryItems = [
     subtitle: "Architectural Geometric Masterpiece with Sunlit Atrium",
     category: "Architecture",
     location: "Chandrasekharpur Prime",
-    image:
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=85",
+    image: modernResidence,
     badge: "Architecture",
     isFeatured: false,
   },

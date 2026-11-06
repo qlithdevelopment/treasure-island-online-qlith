@@ -8,10 +8,15 @@ import {
   Clock,
   Navigation,
   CheckCircle2,
+  ExternalLink,
+  CornerUpRight,
 } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import PageHero from "../../components/common/PageHero";
+import { createContact } from "../../services/contactService";
 
 export default function Contact() {
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -21,17 +26,32 @@ export default function Contact() {
 
   const [submitted, setSubmitted] = useState(false);
 
+  const contactMutation = useMutation({
+    mutationFn: (data) => createContact(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({ name: "", email: "", phone: "", message: "" });
+      }, 4000);
+    },
+  });
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({ name: "", email: "", phone: "", message: "" });
-    }, 4000);
+    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) return;
+
+    contactMutation.mutate({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      message: formData.message,
+    });
   };
 
   return (
@@ -239,9 +259,10 @@ export default function Contact() {
 
                     <button
                       type="submit"
-                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#F87907] via-[#F86E00] to-[#EA580C] px-6 py-3.5 font-semibold text-sm text-white shadow-[0_8px_25px_rgba(248,121,7,0.35)] hover:shadow-[0_12px_32px_rgba(248,121,7,0.48)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
+                      disabled={contactMutation.isPending}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#F87907] via-[#F86E00] to-[#EA580C] px-6 py-3.5 font-semibold text-sm text-white shadow-[0_8px_25px_rgba(248,121,7,0.35)] hover:shadow-[0_12px_32px_rgba(248,121,7,0.48)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer disabled:opacity-60"
                     >
-                      <span>Send Message</span>
+                      <span>{contactMutation.isPending ? "Sending Message..." : "Send Message"}</span>
                       <Send size={16} />
                     </button>
                   </form>
@@ -256,11 +277,44 @@ export default function Contact() {
         <div className="w-full h-[360px] sm:h-[420px] relative">
           <iframe
             title="Treasure Island Location Map"
-            src="https://maps.google.com/maps?q=406,+Prasanti+Vihar+Rd,+near+KIIT+University,+Prasanti+Vihar,+Patia,+Bhubaneswar,+Odisha+751024&t=&z=15&ie=UTF8&iwloc=&output=embed"
-            className="w-full h-full border-0 filter grayscale-[25%] contrast-[1.05]"
+            src="https://maps.google.com/maps?q=406%2C+Prasanti+Vihar+Rd%2C+near+KIIT+University%2C+Prasanti+Vihar%2C+Patia%2C+Bhubaneswar%2C+Odisha+751024&t=&z=16&ie=UTF8&iwloc=&output=embed"
+            className="w-full h-full border-0 filter contrast-[1.02]"
             loading="lazy"
-            allowFullScreen
           />
+          <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 max-w-[270px] sm:max-w-[310px] bg-white rounded-xl p-3.5 sm:p-4 shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-slate-200/90 text-left">
+            <h4 className="text-sm sm:text-[15px] font-bold text-slate-900 leading-tight">
+              Treasure Island
+            </h4>
+            <p className="text-[11px] sm:text-xs text-slate-600 mt-1 leading-snug">
+              406, Prasanti Vihar Rd, near KIIT University, Prasanti Vihar, Patia, Bhubaneswar, Odisha 751024
+            </p>
+            <div className="text-[11px] text-slate-400 mt-1">
+              No reviews
+            </div>
+            <div className="mt-3 flex items-center gap-2">
+              <a
+                href="https://maps.google.com/?q=406,+Prasanti+Vihar+Rd,+near+KIIT+University,+Prasanti+Vihar,+Patia,+Bhubaneswar,+Odisha+751024"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] text-white text-xs font-medium shadow-2xs transition-colors cursor-pointer"
+              >
+                <ExternalLink size={13} />
+                <span>Open in Maps</span>
+              </a>
+              <a
+                href="https://www.google.com/maps/dir/?api=1&destination=406,+Prasanti+Vihar+Rd,+near+KIIT+University,+Prasanti+Vihar,+Patia,+Bhubaneswar,+Odisha+751024"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Get Directions"
+                aria-label="Get Directions"
+                className="w-8 h-8 rounded-full bg-[#f1f3f4] hover:bg-[#e8eaed] flex items-center justify-center transition-colors cursor-pointer shadow-2xs shrink-0"
+              >
+                <div className="w-4 h-4 rounded-[2px] rotate-45 bg-[#1a73e8] flex items-center justify-center">
+                  <CornerUpRight size={10} className="-rotate-45 text-white stroke-[2.5]" />
+                </div>
+              </a>
+            </div>
+          </div>
         </div>
       </section>
     </div>

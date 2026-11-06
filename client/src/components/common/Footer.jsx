@@ -1,13 +1,11 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin } from "lucide-react";
 import logo from "../../assets/home/logo_icon_transparent.png";
-
-const footerBg =
-  "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=85";
+import { villa2 as footerBg } from "../../assets/properties";
 
 export default function Footer() {
   return (
-    <footer className="relative w-full bg-[#020B0F] border-t border-white/10 text-slate-300 px-4 sm:px-8 lg:px-10 pt-16 sm:pt-20 pb-10 sm:pb-12 overflow-hidden select-none">
+    <footer className="relative w-full bg-[#020B0F] border-t border-white/10 text-slate-200 px-4 sm:px-8 lg:px-10 pt-16 sm:pt-20 pb-10 sm:pb-12 overflow-hidden select-none">
       <div className="absolute inset-0 z-0 pointer-events-none">
         <img
           src={footerBg}
@@ -15,15 +13,15 @@ export default function Footer() {
           className="w-full h-full object-cover object-center transform scale-105"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#020B0F]/82 via-[#020B0F]/65 to-[#020B0F]/88" />
-        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#020B0F]/96 via-[#020B0F]/92 to-[#020B0F]/98" />
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
       </div>
 
       <div className="absolute top-0 left-1/4 w-[500px] h-[250px] bg-[#F87907]/10 blur-[120px] pointer-events-none rounded-full" />
       <div className="absolute bottom-0 right-1/4 w-[400px] h-[200px] bg-[#23ADD9]/10 blur-[100px] pointer-events-none rounded-full" />
 
       <div className="relative z-10 max-w-7xl mx-auto w-full">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 sm:pb-14 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 sm:pb-14 border-b border-white/15">
           <div className="lg:col-span-5 flex flex-col items-start pr-0 lg:pr-6">
             <Link to="/" className="flex items-center gap-3 group mb-4">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400/20 to-orange-500/10 border border-amber-400/30 flex items-center justify-center p-1.5 shadow-sm group-hover:border-[#F87907] transition-colors">
@@ -40,33 +38,33 @@ export default function Footer() {
                 >
                   Treasure Island
                 </span>
-                <span className="text-[10px] uppercase tracking-widest text-slate-400 font-medium">
+                <span className="text-[10px] uppercase tracking-widest text-slate-300 font-semibold">
                   Contemporary Borderless Luxury
                 </span>
               </div>
             </Link>
 
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm mb-5">
+            <p className="text-xs sm:text-sm text-slate-200 leading-relaxed max-w-sm mb-5 font-normal">
               Experience elegance, modern luxury, and exceptional quality in
               every detail. Your premier destination for master-crafted
               residences and prime plots.
             </p>
 
-            <div className="flex items-center gap-2 text-xs text-slate-400">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-200 font-medium">
               <MapPin size={14} className="text-[#F87907] shrink-0" />
               <span>Bhubaneswar, Odisha, India</span>
             </div>
           </div>
 
           <div className="lg:col-span-3 sm:pl-2 lg:pl-8">
-            <h3 className="text-sm font-semibold text-white tracking-wider mb-4 uppercase">
+            <h3 className="text-sm font-bold text-white tracking-wider mb-4 uppercase">
               Menu
             </h3>
             <ul className="space-y-2.5 text-xs sm:text-sm">
               <li>
                 <Link
                   to="/"
-                  className="text-slate-400 hover:text-[#F87907] transition-colors duration-200 inline-block"
+                  className="text-slate-200 hover:text-[#F87907] transition-colors duration-200 inline-block font-medium"
                 >
                   Home
                 </Link>
@@ -74,7 +72,7 @@ export default function Footer() {
               <li>
                 <Link
                   to="/aboutus"
-                  className="text-slate-400 hover:text-[#F87907] transition-colors duration-200 inline-block"
+                  className="text-slate-200 hover:text-[#F87907] transition-colors duration-200 inline-block font-medium"
                 >
                   About Us
                 </Link>
@@ -82,7 +80,7 @@ export default function Footer() {
               <li>
                 <Link
                   to="/properties"
-                  className="text-slate-400 hover:text-[#F87907] transition-colors duration-200 inline-block"
+                  className="text-slate-200 hover:text-[#F87907] transition-colors duration-200 inline-block font-medium"
                 >
                   Properties
                 </Link>
@@ -90,7 +88,7 @@ export default function Footer() {
               <li>
                 <Link
                   to="/contact"
-                  className="text-slate-400 hover:text-[#F87907] transition-colors duration-200 inline-block"
+                  className="text-slate-200 hover:text-[#F87907] transition-colors duration-200 inline-block font-medium"
                 >
                   Contact
                 </Link>
@@ -99,13 +97,13 @@ export default function Footer() {
           </div>
 
           <div className="lg:col-span-4">
-            <h3 className="text-sm font-semibold text-white tracking-wider mb-4 uppercase">
+            <h3 className="text-sm font-bold text-white tracking-wider mb-4 uppercase">
               Contacts
             </h3>
             <div className="space-y-2.5 text-xs sm:text-sm">
               <a
                 href="mailto:treasureislandonline2010@gmail.com"
-                className="flex items-center gap-2 text-slate-400 hover:text-[#F87907] transition-colors truncate"
+                className="flex items-center gap-2 text-slate-200 hover:text-[#F87907] transition-colors truncate font-medium"
               >
                 <Mail size={14} className="text-[#F87907] shrink-0" />
                 <span className="truncate">
@@ -115,7 +113,7 @@ export default function Footer() {
 
               <a
                 href="tel:+919348980948"
-                className="flex items-center gap-2 text-slate-400 hover:text-[#F87907] transition-colors"
+                className="flex items-center gap-2 text-slate-200 hover:text-[#F87907] transition-colors font-medium"
               >
                 <Phone size={14} className="text-[#F87907] shrink-0" />
                 <span>+91 9348980948</span>
@@ -123,12 +121,12 @@ export default function Footer() {
             </div>
 
             <div className="mt-6">
-              <h4 className="text-xs font-semibold text-white tracking-wider mb-3 uppercase">
+              <h4 className="text-xs font-bold text-white tracking-wider mb-3 uppercase">
                 Socials
               </h4>
               <div className="flex items-center gap-2.5">
                 <a
-                  href="https://facebook.com"
+                  href="https://www.facebook.com/AskTreasureIsland"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#F87907] text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-xs cursor-pointer"
@@ -140,7 +138,7 @@ export default function Footer() {
                 </a>
 
                 <a
-                  href="https://instagram.com"
+                  href="https://www.instagram.com/treasureislandonline"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#F87907] text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-xs cursor-pointer"
@@ -152,7 +150,7 @@ export default function Footer() {
                 </a>
 
                 <a
-                  href="https://youtube.com"
+                  href="https://www.youtube.com/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#F87907] text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-xs cursor-pointer"
@@ -167,14 +165,14 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-6 sm:pt-8 text-center text-xs text-slate-400">
+        <div className="pt-6 sm:pt-8 text-center text-xs sm:text-[13px] text-slate-300 font-medium">
           <p>
             © 2026 Treasure Island. All rights reserved | Developed by{" "}
             <a
               href="https://qlith.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#F87907] font-semibold hover:underline"
+              className="text-[#F87907] font-bold hover:underline"
             >
               Qlith
             </a>
