@@ -24,7 +24,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 sm:pb-14 border-b border-white/15">
           <div className="lg:col-span-5 flex flex-col items-start pr-0 lg:pr-6">
             <Link to="/" className="flex items-center gap-3 group mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400/20 to-orange-500/10 border border-amber-400/30 flex items-center justify-center p-1.5 shadow-sm group-hover:border-[#F87907] transition-colors">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-amber-400/20 to-orange-500/10 border border-amber-400/30 flex items-center justify-center p-2 shadow-sm group-hover:border-[#F87907] transition-colors shrink-0">
                 <img
                   src={logo}
                   alt="Treasure Island"

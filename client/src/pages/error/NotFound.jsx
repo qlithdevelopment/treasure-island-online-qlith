@@ -14,7 +14,7 @@ export default function NotFound() {
 
       <header className="w-full max-w-7xl flex items-center justify-between z-10">
         <Link to="/" className="flex items-center gap-3 group cursor-pointer">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-black/40 border border-white/10 p-1.5 flex items-center justify-center group-hover:border-[#F87907] transition-all shadow-md">
+          <div className="w-13 h-13 sm:w-14 sm:h-14 shrink-0 rounded-2xl bg-black/40 border border-white/10 p-2 flex items-center justify-center group-hover:border-[#F87907] transition-all shadow-md">
             <img
               src={logoIcon}
               alt="Treasure Island"

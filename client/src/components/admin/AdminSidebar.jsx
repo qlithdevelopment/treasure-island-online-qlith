@@ -36,7 +36,7 @@ export default function AdminSidebar({ isOpen, onClose, onLogout }) {
             className="flex items-center gap-2.5 group cursor-pointer"
             title="Go to Home Page"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50/80 p-1.5 border border-orange-200/90 group-hover:border-[#F87907] transition-all shadow-xs group-hover:scale-105">
+            <div className="flex h-13 w-13 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-orange-50/80 p-2 border border-orange-200/90 group-hover:border-[#F87907] transition-all shadow-xs group-hover:scale-105">
               <img
                 src={logoIcon}
                 alt="Treasure Island Logo"

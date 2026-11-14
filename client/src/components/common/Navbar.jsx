@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, LogIn, Sparkles } from "lucide-react";
-import logoIcon from "../../assets/home/logo_icon_transparent.png";
+import logoIcon from "../../assets/home/TreasureLogoShort.png";
 import { useAuth } from "../../context/AuthContext";
 
 const navLinks = [
@@ -73,23 +73,19 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <Link
             to="/"
-            className={`pointer-events-auto group flex items-center gap-3 transition-all duration-300 ${
+            className={`pointer-events-auto flex items-center gap-3 transition-all duration-300 ${
               isHomePage && isScrolledTop
-                ? "rounded-2xl bg-black/35 backdrop-blur-md border border-white/10 px-4 sm:px-5 py-2 sm:py-2.5 shadow-2xl hover:bg-black/50 hover:border-white/20"
-                : "hover:opacity-90"
+                ? "rounded-2xl bg-black/35 backdrop-blur-md border border-white/10 px-4 sm:px-5 py-2 sm:py-2.5 shadow-2xl"
+                : ""
             }`}
           >
-            <motion.div
-              whileHover={{ rotate: 10, scale: 1.08 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9"
-            >
+            <div className="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9">
               <img
                 src={logoIcon}
                 alt="Treasure Island Logo"
                 className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
               />
-            </motion.div>
+            </div>
 
             <span
               className="text-white text-sm sm:text-base lg:text-lg font-bold tracking-[0.16em] uppercase whitespace-nowrap"
@@ -199,9 +195,7 @@ export default function Navbar() {
             >
               <div className="flex items-center justify-between pb-5 border-b border-white/10">
                 <div className="flex items-center gap-3">
-                  <motion.img
-                    animate={{ rotate: [0, 5, -5, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  <img
                     src={logoIcon}
                     alt="Treasure Island Logo"
                     className="w-8 h-8 object-contain"

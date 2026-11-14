@@ -185,16 +185,7 @@ export default function Hero() {
                 />
               </Link>
 
-              <button
-                type="button"
-                className="group inline-flex items-center gap-2.5 rounded-full bg-black/30 backdrop-blur-md border border-white/25 px-6 sm:px-7 py-3.5 sm:py-4 text-sm sm:text-base font-medium text-white shadow-lg transition-all duration-300 hover:bg-white/10 hover:border-white/40 active:scale-[0.98]"
-              >
-                <Play
-                  size={16}
-                  className="fill-white/30 text-white transition-transform duration-300 group-hover:scale-110"
-                />
-                <span>Watch Video</span>
-              </button>
+             
             </div>
           </div>
         </div>
